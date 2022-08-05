@@ -24,8 +24,26 @@ class _LoginScreenState extends State<LoginScreen> {
     'password': '',
   };
 
+  //pour afficher une boite de dialog de nos erreurs
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Oops une erreur s\'est produite'),
+        content: Text(message),
+        actions: [
+          FlatButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('ok '))
+        ],
+      ),
+    );
+  }
+
   //ici nous envoyons les informations de notre fornulaire a notre serveur
-  void _submit() {
+  Future<void> _submit() async {
     //si notre formulaire n'est pas valide on ne faiit rien
     if (!_formKey.currentState!.validate()) {
       // Invalid!
@@ -33,16 +51,20 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     _formKey.currentState!.save();
 
-    if (_authMode == AuthMode.Login) {
-      //logger l'utilisateur
-      //print('Logger');
-      Provider.of<AuthProvider>(context, listen: false).login(
-          _authData['email'].toString(), _authData['password'].toString());
-    } else {
-      //enregistrer l'utilisateur
-      print('Inscrit');
-      Provider.of<AuthProvider>(context, listen: false).signIn(
-          _authData['email'].toString(), _authData['password'].toString());
+    try {
+      if (_authMode == AuthMode.Login) {
+        //logger l'utilisateur
+        //print('Logger');
+        await Provider.of<AuthProvider>(context, listen: false).login(
+            _authData['email'].toString(), _authData['password'].toString());
+      } else {
+        //enregistrer l'utilisateur
+        //print('Inscrit');
+        await Provider.of<AuthProvider>(context, listen: false).register(
+            _authData['email'].toString(), _authData['password'].toString());
+      }
+    } catch (error) {
+      _showErrorDialog('une erreur');
     }
   }
 

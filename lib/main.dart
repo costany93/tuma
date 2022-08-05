@@ -15,23 +15,24 @@ class Tuma extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: AuthProvider(),
-        )
-      ],
-      child: MaterialApp(
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.cyan,
-          ),
-        ),
-        home: HomePageScreen(),
-        routes: {
-          LoginScreen.routeName: (context) => LoginScreen(),
-          SignIn.routeName: (context) => SignIn()
-        },
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider.value(
+            value: AuthProvider(),
+          )
+        ],
+        child: Consumer<AuthProvider>(
+          builder: ((ctx, authData, child) => MaterialApp(
+                theme: ThemeData(
+                  colorScheme: ColorScheme.fromSwatch(
+                    primarySwatch: Colors.cyan,
+                  ),
+                ),
+                home: authData.isAuth ? HomePageScreen() : LoginScreen(),
+                routes: {
+                  LoginScreen.routeName: (context) => LoginScreen(),
+                  SignIn.routeName: (context) => SignIn()
+                },
+              )),
+        ));
   }
 }

@@ -33,7 +33,7 @@ class _SignInState extends State<SignIn> {
     }
     _formKey.currentState!.save();
 
-    Provider.of<AuthProvider>(context, listen: false).signIn(
+    Provider.of<AuthProvider>(context, listen: false).register(
         _authData['email'].toString(), _authData['password'].toString());
   }
 
