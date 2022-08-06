@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
+import 'package:tuma/utillities/host.dart';
+import 'package:tuma/models/http_exceptions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
   String? _userId;
+
+  final String host = Host.host;
 
   bool get isAuth {
     return token != null;
@@ -34,7 +39,7 @@ class AuthProvider with ChangeNotifier {
     map['password'] = password;
     try {
       var url = Uri.parse(
-        'http://localhost:8000/api/auth/login',
+        '$host/api/auth/login',
       );
       final response = await http.post(url, body: map
           /* body: json.encode(
@@ -47,7 +52,7 @@ class AuthProvider with ChangeNotifier {
       //print(responseData['error']);
       //on checke d'abord si nous avons un erreur dans la recuperation de notre token afin de recuperer notre utilisateur
       if (responseData['error'] != null) {
-        throw responseData['error'];
+        throw HttpExceptions(responseData['error']);
       }
 
       //ici nous recuperons les informations sur l'utilisateur
@@ -57,7 +62,7 @@ class AuthProvider with ChangeNotifier {
         'Authorization': "Bearer $token"
       };
       url = Uri.parse(
-        'http://localhost:8000/api/auth/profile',
+        '$host/api/auth/profile',
       );
       final getUser = await http.post(url, headers: requestHeaders);
       final userJson = json.decode(getUser.body);
@@ -69,6 +74,16 @@ class AuthProvider with ChangeNotifier {
       print(userJson);
 
       notifyListeners();
+      //ici nous allons sauvegarder nos donnees utilisateur localement
+      final localStorage = await SharedPreferences.getInstance();
+      final userData = json.encode(
+        {
+          'token': _token,
+          'userId': _userId,
+          'expiryDate': _expiryDate!.toIso8601String(),
+        },
+      );
+      localStorage.setString('userData', userData);
     } catch (error) {
       print(error.toString());
       throw error;
@@ -83,14 +98,26 @@ class AuthProvider with ChangeNotifier {
     map['password_confirmation'] = password;
     try {
       var url = Uri.parse(
-        'http://localhost:8000/api/auth/register',
+        '$host/api/auth/register',
       );
       final response = await http.post(url, body: map);
       final responseData = json.decode(response.body);
+      if (responseData['email'] != null) {
+        throw HttpExceptions(responseData['email'].join());
+      }
       print(responseData['user']);
+      //login(email, password);
       notifyListeners();
     } catch (error) {
+      print(error.toString());
       throw error;
     }
+  }
+
+  Future<void> logout() async {
+    _userId = null;
+    _token = null;
+    _expiryDate = null;
+    notifyListeners();
   }
 }

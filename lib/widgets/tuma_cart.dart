@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:tuma/utillities/app_colors.dart';
 
 class TumaCart extends StatelessWidget {
   const TumaCart({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class TumaCart extends StatelessWidget {
               //transform: GradientRotation(0.1),
               colors: <Color>[
                 Color(0xFFFFFFFF),
-                Color(0xFF18E8E8),
+                AppColor.appBleu5,
               ],
             ),
             boxShadow: [
@@ -82,7 +83,7 @@ class TumaCart extends StatelessWidget {
                                   fontSize: mediaQuery.size.height * 0.04,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.black),
+                                  color: AppColor.appBlack),
                               children: [
                                 TextSpan(
                                   text: ' F',
@@ -106,7 +107,7 @@ class TumaCart extends StatelessWidget {
                           onPressed: null,
                           icon: Icon(
                             Icons.visibility_off_outlined,
-                            color: Colors.white,
+                            color: AppColor.appWhite,
                           ),
                         ),
                       ],

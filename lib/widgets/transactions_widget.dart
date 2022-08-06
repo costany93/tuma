@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:tuma/utillities/app_colors.dart';
 
 class TransactionWidget extends StatelessWidget {
   const TransactionWidget({Key? key}) : super(key: key);
@@ -48,7 +49,7 @@ class TransactionWidget extends StatelessWidget {
                         fontSize: mediaQuery.size.height * 0.015,
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w400,
-                        color: Colors.grey,
+                        color: AppColor.appGrey,
                       ),
                     ),
                     Icon(

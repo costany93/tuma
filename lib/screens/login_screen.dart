@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tuma/models/http_exceptions.dart';
 import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/utillities/app_colors.dart';
 
 import 'package:tuma/widgets/auth_footer_widget.dart';
 import 'package:tuma/widgets/login_header_widget.dart';
@@ -29,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Oops une erreur s\'est produite'),
+        title: const Text('Oops'),
         content: Text(message),
         actions: [
           FlatButton(
@@ -37,6 +39,34 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.of(context).pop();
               },
               child: const Text('ok '))
+        ],
+      ),
+    );
+  }
+
+  //pour afficher une boite de dialog de nos erreurs
+  void _showInscriptionDialog(String email, String password) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text(
+          'Genial',
+          style: TextStyle(color: AppColor.appGreen),
+        ),
+        content: Text('Inscription réussie avec succès'),
+        actions: [
+          FlatButton(
+              onPressed: () {
+                Provider.of<AuthProvider>(context, listen: false).login(
+                    _authData['email'].toString(),
+                    _authData['password'].toString());
+
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Je me connecte',
+                style: TextStyle(color: AppColor.appGreen),
+              ))
         ],
       ),
     );
@@ -60,11 +90,27 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         //enregistrer l'utilisateur
         //print('Inscrit');
-        await Provider.of<AuthProvider>(context, listen: false).register(
-            _authData['email'].toString(), _authData['password'].toString());
+        await Provider.of<AuthProvider>(context, listen: false)
+            .register(
+                _authData['email'].toString(), _authData['password'].toString())
+            .then((_) => _showInscriptionDialog(_authData['email'].toString(),
+                _authData['password'].toString()));
       }
+    } on HttpExceptions catch (error) {
+      var messageError = 'Erreur d\'authentification';
+      if (error.toString().contains('Unauthorized')) {
+        messageError = 'Email ou mot de passe incorrect, veuillez réessayer ';
+      } else if (error
+          .toString()
+          .contains('The email has already been taken.')) {
+        messageError =
+            'Email déjà utilisé par un autre utilisateur, veuillez changer d’adresse email';
+      } else {
+        messageError = 'Probleme de connexion a votre compte';
+      }
+      _showErrorDialog(messageError);
     } catch (error) {
-      _showErrorDialog('une erreur');
+      _showErrorDialog('une erreur s\'est produite veuillez reessayer');
     }
   }
 
@@ -129,37 +175,37 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextFormField(
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: const Color(0XFFF6F5F5),
+                          fillColor: AppColor.appFillLoginColor,
                           hintText: 'Email',
                           hintStyle: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w200,
                               fontSize: mediaQuery.size.height * 0.016,
-                              color: Colors.grey),
+                              color: AppColor.appGrey),
                           contentPadding: const EdgeInsets.all(15),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             // width: 0.0 produces a thin "hairline" border
                             borderSide: const BorderSide(
-                                color: Color(0XFFF6F5F5), width: 0.0),
+                                color: AppColor.appFillLoginColor, width: 0.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             // width: 0.0 produces a thin "hairline" border
                             borderSide: const BorderSide(
-                                color: Color(0XFFF6F5F5), width: 0.0),
+                                color: AppColor.appFillLoginColor, width: 0.0),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             // width: 0.0 produces a thin "hairline" border
-                            borderSide:
-                                const BorderSide(color: Colors.red, width: 0.0),
+                            borderSide: const BorderSide(
+                                color: AppColor.appRed, width: 0.0),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             // width: 0.0 produces a thin "hairline" border
-                            borderSide:
-                                const BorderSide(color: Colors.red, width: 0.0),
+                            borderSide: const BorderSide(
+                                color: AppColor.appRed, width: 0.0),
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
@@ -188,37 +234,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: Color(0XFFF6F5F5),
+                            fillColor: AppColor.appFillLoginColor,
                             hintText: 'Mot de passe',
                             hintStyle: TextStyle(
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w200,
                                 fontSize: mediaQuery.size.height * 0.016,
-                                color: Colors.grey),
+                                color: AppColor.appGrey),
                             contentPadding: const EdgeInsets.all(15),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               // width: 0.0 produces a thin "hairline" border
                               borderSide: const BorderSide(
-                                  color: Color(0XFFF6F5F5), width: 0.0),
+                                  color: AppColor.appFillLoginColor,
+                                  width: 0.0),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               // width: 0.0 produces a thin "hairline" border
                               borderSide: const BorderSide(
-                                  color: Color(0XFFF6F5F5), width: 0.0),
+                                  color: AppColor.appFillLoginColor,
+                                  width: 0.0),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               // width: 0.0 produces a thin "hairline" border
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 0.0),
+                                  color: AppColor.appRed, width: 0.0),
                             ),
                             focusedErrorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               // width: 0.0 produces a thin "hairline" border
                               borderSide: const BorderSide(
-                                  color: Colors.red, width: 0.0),
+                                  color: AppColor.appRed, width: 0.0),
                             ),
                           ),
                           controller: _passwordController,
@@ -245,37 +293,39 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: TextFormField(
                             decoration: InputDecoration(
                               filled: true,
-                              fillColor: Color(0XFFF6F5F5),
+                              fillColor: AppColor.appFillLoginColor,
                               hintText: 'Confirmer le mot de passe',
                               hintStyle: TextStyle(
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w200,
                                   fontSize: mediaQuery.size.height * 0.016,
-                                  color: Colors.grey),
+                                  color: AppColor.appGrey),
                               contentPadding: const EdgeInsets.all(15),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 // width: 0.0 produces a thin "hairline" border
                                 borderSide: const BorderSide(
-                                    color: Color(0XFFF6F5F5), width: 0.0),
+                                    color: AppColor.appFillLoginColor,
+                                    width: 0.0),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 // width: 0.0 produces a thin "hairline" border
                                 borderSide: const BorderSide(
-                                    color: Color(0XFFF6F5F5), width: 0.0),
+                                    color: AppColor.appFillLoginColor,
+                                    width: 0.0),
                               ),
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 // width: 0.0 produces a thin "hairline" border
                                 borderSide: const BorderSide(
-                                    color: Colors.red, width: 0.0),
+                                    color: AppColor.appRed, width: 0.0),
                               ),
                               focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 // width: 0.0 produces a thin "hairline" border
                                 borderSide: const BorderSide(
-                                    color: Colors.red, width: 0.0),
+                                    color: AppColor.appRed, width: 0.0),
                               ),
                             ),
                             obscureText: true,
@@ -308,9 +358,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: const BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: <Color>[
-                                      Color(0xFF12CFC9),
-                                      Color(0xFF16E1DF),
-                                      Color(0xFF12CFC9),
+                                      AppColor.appBleu1,
+                                      AppColor.appBleu2,
+                                      AppColor.appBleu3,
                                     ],
                                   ),
                                 ),
@@ -321,7 +371,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: TextButton(
                                 style: TextButton.styleFrom(
                                   padding: const EdgeInsets.all(16.0),
-                                  primary: Colors.white,
+                                  primary: AppColor.appWhite,
                                   textStyle: const TextStyle(fontSize: 20),
                                 ),
                                 onPressed: _submit,
@@ -360,7 +410,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   : '  Connectez-vous',
                               style: const TextStyle(
                                 fontFamily: 'Inter',
-                                color: Color(0XFF13D0CA),
+                                color: AppColor.appBleu4,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),

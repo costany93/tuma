@@ -3,6 +3,9 @@ import 'dart:ffi';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/widgets/transactions_widget.dart';
 import 'package:tuma/widgets/tuma_cart.dart';
 
@@ -18,6 +21,15 @@ class HomePageScreen extends StatelessWidget {
           margin: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
           child: Column(
             children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: () =>
+                      Provider.of<AuthProvider>(context, listen: false)
+                          .logout(),
+                  icon: Icon(Icons.logout),
+                ),
+              ),
               Center(
                 child: Text(
                   'Bienvenue',
@@ -50,7 +62,7 @@ class HomePageScreen extends StatelessWidget {
                         Container(
                           height: mediaQuery.size.height * 0.008,
                           width: mediaQuery.size.width * 0.23,
-                          color: Color(0xFF18E8E8),
+                          color: AppColor.appBleu5,
                         )
                       ],
                     ),
@@ -59,7 +71,7 @@ class HomePageScreen extends StatelessWidget {
                       icon: Icon(
                         Icons.short_text,
                         size: mediaQuery.size.height * 0.05,
-                        color: Color(0xFF18E8E8),
+                        color: AppColor.appBleu5,
                       ),
                     )
                   ],
@@ -93,11 +105,11 @@ class HomePageScreen extends StatelessWidget {
         onPressed: () {
           print('press');
         },
-        backgroundColor: Color(0XFF12CFC9),
+        backgroundColor: AppColor.appBleu3,
         child: Icon(
           Icons.add,
           size: mediaQuery.size.height * 0.05,
-          color: Colors.white,
+          color: AppColor.appWhite,
         ),
       ),
     );
