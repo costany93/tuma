@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/screens/homepage_screen.dart';
 import 'package:tuma/screens/login_screen.dart';
+import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/signin_screen.dart';
 
 void main() {
@@ -27,7 +28,8 @@ class Tuma extends StatelessWidget {
                     primarySwatch: Colors.cyan,
                   ),
                 ),
-                home: authData.isAuth ? HomePageScreen() : LoginScreen(),
+                //home: authData.isAuth ? HomePageScreen() : LoginScreen(),
+                home: SettingScreen(),
                 routes: {
                   LoginScreen.routeName: (context) => LoginScreen(),
                   SignIn.routeName: (context) => SignIn()

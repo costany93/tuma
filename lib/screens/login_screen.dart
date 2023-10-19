@@ -34,11 +34,17 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text('Oops'),
         content: Text(message),
         actions: [
-          FlatButton(
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('ok '),
+          )
+          /*FlatButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('ok '))
+              child: const Text('ok '))*/
         ],
       ),
     );
@@ -55,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         content: Text('Inscription réussie avec succès'),
         actions: [
-          FlatButton(
+          TextButton(
               onPressed: () {
                 Provider.of<AuthProvider>(context, listen: false).login(
                     _authData['email'].toString(),
@@ -66,7 +72,19 @@ class _LoginScreenState extends State<LoginScreen> {
               child: const Text(
                 'Je me connecte',
                 style: TextStyle(color: AppColor.appGreen),
-              ))
+              )),
+          /*FlatButton(
+              onPressed: () {
+                Provider.of<AuthProvider>(context, listen: false).login(
+                    _authData['email'].toString(),
+                    _authData['password'].toString());
+
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Je me connecte',
+                style: TextStyle(color: AppColor.appGreen),
+              ))*/
         ],
       ),
     );
