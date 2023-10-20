@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tuma/screens/personnal_information.dart';
 import 'package:tuma/utillities/app_colors.dart';
 
 class SettingWidget extends StatelessWidget {
@@ -7,16 +8,18 @@ class SettingWidget extends StatelessWidget {
     required this.mediaQuery,
     required this.information,
     required this.iconsLeft,
+    required this.routePath,
   });
 
   final MediaQueryData mediaQuery;
   final String information;
   final IconData iconsLeft;
+  final String routePath;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => print('you= are tapping'),
+      onTap: () => Navigator.of(context).pushNamed(routePath),
       child: Container(
         margin: EdgeInsets.only(bottom: mediaQuery.size.height * 0.05),
         child: Column(

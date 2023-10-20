@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/widgets/transactions_widget.dart';
 import 'package:tuma/widgets/tuma_cart.dart';
@@ -21,6 +22,36 @@ class HomePageScreen extends StatelessWidget {
           margin: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.of(context)
+                        .pushNamed(SettingScreen.routeName),
+                    icon: Icon(
+                      Icons.settings,
+                      color: AppColor.appBleu4,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () =>
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .logout(),
+                    icon: Icon(
+                      Icons.logout,
+                      color: AppColor.appBleu4,
+                    ),
+                  ),
+                ],
+              ),
+              /*Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed(SettingScreen.routeName),
+                  icon: Icon(Icons.settings),
+                ),
+              ),
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
@@ -29,7 +60,7 @@ class HomePageScreen extends StatelessWidget {
                           .logout(),
                   icon: Icon(Icons.logout),
                 ),
-              ),
+              ),*/
               Center(
                 child: Text(
                   'Bienvenue',

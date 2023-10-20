@@ -19,8 +19,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  //pour nous permettre d'avoir acces au input du formulaire
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
+  //stockons l'email et le mot de passe
   Map<String, String> _authData = {
     'email': '',
     'password': '',

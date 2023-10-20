@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tuma/screens/change_password_screen.dart';
+import 'package:tuma/screens/personnal_information.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/logo_image.dart';
+import 'package:tuma/widgets/setting_cart_widget.dart';
 import 'package:tuma/widgets/setting_widget.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -15,36 +18,9 @@ class SettingScreen extends StatelessWidget {
         //cadran bleu d'en haut
         child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(color: AppColor.appBleu4),
-              height: mediaQuery.size.height * 0.35,
-              width: mediaQuery.size.width,
-              child: Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).viewPadding.top),
-                width: mediaQuery.size.width * 0.2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      LogoImage.imageLogoPath,
-                      height: mediaQuery.size.height * 0.15,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: mediaQuery.size.height * 0.02,
-                      ),
-                      child: Text(
-                        'Bienvenue',
-                        style: TextStyle(
-                            fontSize: mediaQuery.size.width * 0.05,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            SettingCartWidget(
+              mediaQuery: mediaQuery,
+              settingInfo: 'Parametre de compte',
             ),
             //section parametre
             Container(
@@ -64,16 +40,19 @@ class SettingScreen extends StatelessWidget {
                             mediaQuery: mediaQuery,
                             information: 'Informations personnelles',
                             iconsLeft: Icons.account_circle,
+                            routePath: PersonnalInformation.routeName,
                           ),
                           SettingWidget(
                             mediaQuery: mediaQuery,
                             information: 'Modifier votre mot de passe',
                             iconsLeft: Icons.lock,
+                            routePath: ChangePasswordScreen.routeName,
                           ),
                           SettingWidget(
                             mediaQuery: mediaQuery,
                             information: 'Appeler le service client',
                             iconsLeft: Icons.call,
+                            routePath: PersonnalInformation.routeName,
                           ),
                         ],
                       ),
