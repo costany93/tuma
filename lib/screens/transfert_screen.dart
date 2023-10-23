@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/logo_image.dart';
 
@@ -86,6 +87,9 @@ class _TransfertScreenState extends State<TransfertScreen> {
                                   _personnalData['nom'] = value!,
                                 },*/
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                         ),
                       ),
                       //input montant a transferer
@@ -107,6 +111,39 @@ class _TransfertScreenState extends State<TransfertScreen> {
                                     _personnalData['nom'] = value!,
                                   },*/
                             keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp("[0-9]"),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      //input mot de passe
+                      Container(
+                        margin:
+                            EdgeInsets.only(top: mediaQuery.size.height * 0.02),
+                        child: SizedBox(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              hintText: 'Entrez votre mot de passe',
+                              border: OutlineInputBorder(),
+                              hintStyle: TextStyle(
+                                color: AppColor.appGrey,
+                              ),
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(12),
+                            ),
+                            /*onSaved: (value) => {
+                                    _personnalData['nom'] = value!,
+                                  },*/
+                            keyboardType: TextInputType.number,
+                            obscureText: true,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp("[0-9]"),
+                              )
+                            ],
                           ),
                         ),
                       ),
@@ -156,7 +193,7 @@ class _TransfertScreenState extends State<TransfertScreen> {
                                     textStyle: const TextStyle(fontSize: 20),
                                   ),
                                   onPressed: () => print('transfert effectue'),
-                                  child: Text('Modifier'),
+                                  child: Text('Transferer'),
                                 ),
                               ),
                             ],

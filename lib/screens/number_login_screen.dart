@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/logo_image.dart';
+
+//pour pouvoir switcher de mode
+enum AuthMode { Signup, Login }
 
 class NumberLoginScreen extends StatefulWidget {
   const NumberLoginScreen({super.key});
@@ -11,6 +15,21 @@ class NumberLoginScreen extends StatefulWidget {
 }
 
 class _NumberLoginScreenState extends State<NumberLoginScreen> {
+  //ici on defini le mode de base du formulaire le mode login
+  AuthMode _authMode = AuthMode.Login;
+  //nous permet de switcher de mode
+  void _switchAuthMode() {
+    if (_authMode == AuthMode.Login) {
+      setState(() {
+        _authMode = AuthMode.Signup;
+      });
+    } else {
+      setState(() {
+        _authMode = AuthMode.Login;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
@@ -47,7 +66,7 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
                     Container(
                       width: mediaQuery.size.width,
                       margin:
-                          EdgeInsets.only(top: mediaQuery.size.width * 0.25),
+                          EdgeInsets.only(top: mediaQuery.size.width * 0.15),
                       padding: EdgeInsets.symmetric(
                           horizontal: mediaQuery.size.width * 0.07),
                       child: Form(
@@ -72,7 +91,8 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
                                     /*onSaved: (value) => {
                                       _personnalData['nom'] = value!,
                                     },*/
-                                    keyboardType: TextInputType.number,
+
+                                    keyboardType: TextInputType.phone,
                                     enabled: false,
                                   ),
                                 ),
@@ -93,6 +113,10 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
                                       _personnalData['nom'] = value!,
                                     },*/
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp("[0-9]"))
+                                    ],
                                   ),
                                 ),
                               ],
@@ -130,7 +154,15 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
                                         ),
                                         onPressed: () => print(
                                             'Inscription reussi effectue'),
-                                        child: Text("Connexion"),
+                                        child: Text(
+                                          _authMode == AuthMode.Login
+                                              ? 'Connexion'
+                                              : 'Inscription',
+                                          style: const TextStyle(
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -148,23 +180,23 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    /* _authMode == AuthMode.Login
-                                  ? 'Pas de compte?'
-                                  : 'Déjà membre?*/
-                                    'Pas de compte?',
+                                    _authMode == AuthMode.Login
+                                        ? 'Pas de compte?'
+                                        : 'Déjà membre?',
                                     style: const TextStyle(
                                       fontFamily: 'Inter',
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                   InkResponse(
-                                    onTap: /*_switchAuthMode*/ () =>
-                                        print('tu as switcher de mode'),
+                                    onTap:
+                                        _switchAuthMode /*() =>
+                                        print('tu as switcher de mode')*/
+                                    ,
                                     child: Text(
-                                      /*_authMode == AuthMode.Login
-                                    ? '  Inscrivez-vous'
-                                    : '  Connectez-vous'*/
-                                      ' Inscrivez-vous',
+                                      _authMode == AuthMode.Login
+                                          ? '  Inscrivez-vous'
+                                          : '  Connectez-vous' /*' Inscrivez-vous'*/,
                                       style: const TextStyle(
                                         fontFamily: 'Inter',
                                         color: AppColor.appBleu4,
