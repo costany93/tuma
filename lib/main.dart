@@ -7,6 +7,7 @@ import 'package:tuma/screens/login_screen.dart';
 import 'package:tuma/screens/personnal_information.dart';
 import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/signin_screen.dart';
+import 'package:tuma/screens/transfert_screen.dart';
 
 void main() {
   runApp(const Tuma());
@@ -40,7 +41,8 @@ class Tuma extends StatelessWidget {
                       PersonnalInformation(),
                   ChangePasswordScreen.routeName: (context) =>
                       ChangePasswordScreen(),
-                  SettingScreen.routeName: (context) => SettingScreen()
+                  SettingScreen.routeName: (context) => SettingScreen(),
+                  TransfertScreen.routeName: (context) => TransfertScreen()
                 },
               )),
         ));

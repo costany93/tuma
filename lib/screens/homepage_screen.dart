@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/screens/setting_screen.dart';
+import 'package:tuma/screens/transfert_screen.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/widgets/transactions_widget.dart';
 import 'package:tuma/widgets/tuma_cart.dart';
@@ -133,9 +134,8 @@ class HomePageScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('press');
-        },
+        onPressed: () =>
+            Navigator.of(context).pushNamed(TransfertScreen.routeName),
         backgroundColor: AppColor.appBleu3,
         child: Icon(
           Icons.add,
