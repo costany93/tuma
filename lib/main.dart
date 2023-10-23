@@ -6,6 +6,7 @@ import 'package:tuma/screens/homepage_screen.dart';
 import 'package:tuma/screens/login_screen.dart';
 import 'package:tuma/screens/number_login_screen.dart';
 import 'package:tuma/screens/personnal_information.dart';
+import 'package:tuma/screens/receipt_screen.dart';
 import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/signin_screen.dart';
 import 'package:tuma/screens/transfert_screen.dart';
@@ -34,7 +35,7 @@ class Tuma extends StatelessWidget {
                   ),
                 ),
                 //home: authData.isAuth ? HomePageScreen() : LoginScreen(),
-                home: HomePageScreen(),
+                home: ReceiptScreen(),
                 routes: {
                   LoginScreen.routeName: (context) => LoginScreen(),
                   SignIn.routeName: (context) => SignIn(),
@@ -44,7 +45,8 @@ class Tuma extends StatelessWidget {
                       ChangePasswordScreen(),
                   SettingScreen.routeName: (context) => SettingScreen(),
                   TransfertScreen.routeName: (context) => TransfertScreen(),
-                  NumberLoginScreen.routeName: (context) => NumberLoginScreen()
+                  NumberLoginScreen.routeName: (context) => NumberLoginScreen(),
+                  ReceiptScreen.routeName: (context) => ReceiptScreen()
                 },
               )),
         ));
