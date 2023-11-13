@@ -35,7 +35,7 @@ class Tuma extends StatelessWidget {
                   ),
                 ),
                 //home: authData.isAuth ? HomePageScreen() : LoginScreen(),
-                home: ReceiptScreen(),
+                home: LoginScreen(),
                 routes: {
                   LoginScreen.routeName: (context) => LoginScreen(),
                   SignIn.routeName: (context) => SignIn(),

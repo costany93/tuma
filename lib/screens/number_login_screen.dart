@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tuma/models/http_exceptions.dart';
+import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/logo_image.dart';
+import 'package:provider/provider.dart';
 
 //pour pouvoir switcher de mode
 enum AuthMode { Signup, Login }
@@ -15,8 +18,15 @@ class NumberLoginScreen extends StatefulWidget {
 }
 
 class _NumberLoginScreenState extends State<NumberLoginScreen> {
+  //pour nous permettre d'avoir acces au input du formulaire
+  final GlobalKey<FormState> _formKey = GlobalKey();
   //ici on defini le mode de base du formulaire le mode login
   AuthMode _authMode = AuthMode.Login;
+  //stockons l'email et le mot de passe
+  Map<String, String> _authData = {
+    'phone_number': '',
+    'password': '',
+  };
   //nous permet de switcher de mode
   void _switchAuthMode() {
     if (_authMode == AuthMode.Login) {
@@ -28,6 +38,55 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
         _authMode = AuthMode.Login;
       });
     }
+  }
+
+  //ici nous envoyons les informations de notre fornulaire a notre serveur
+  Future<void> _submit() async {
+    //si notre formulaire n'est pas valide on ne faiit rien
+    /*if (!_formKey.currentState!.validate()) {
+      // Invalid!
+      return;
+    }*/
+    // _formKey.currentState!.save();
+
+    // try {
+    if (_authMode == AuthMode.Login) {
+      //logger l'utilisateur
+      //print('Logger');
+      await Provider.of<AuthProvider>(context, listen: false).login(
+          _authData['email'].toString(), _authData['password'].toString());
+    } else {
+      //enregistrer l'utilisateur
+      print('Inscrit');
+      await Provider.of<AuthProvider>(context, listen: false)
+          .registerWithPhoneNumber(
+            'kandza@kandza.com',
+            'password',
+          )
+          .then(
+              (_) => /*_showInscriptionDialog(
+                _authData['email'].toString(),
+                _authData['password'].toString(),
+              ),*/
+                  print('email, mot de passe'));
+    }
+    /*} on HttpExceptions catch (error) {
+      var messageError = 'Erreur d\'authentification';
+      /*if (error.toString().contains('Unauthorized')) {
+        messageError = 'Email ou mot de passe incorrect, veuillez réessayer ';
+      } else if (error
+          .toString()
+          .contains('The email has already been taken.')) {
+        messageError =
+            'Email déjà utilisé par un autre utilisateur, veuillez changer d’adresse email';
+      } else {
+        messageError = 'Probleme de connexion a votre compte';
+      }
+      _showErrorDialog(messageError);*/
+    } catch (error) {
+      // _showErrorDialog('une erreur s\'est produite veuillez reessayer');
+      print('une erreur s\'est produite veuillez reessayer');
+    }*/
   }
 
   @override
@@ -121,6 +180,49 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
                                 ),
                               ],
                             ),
+
+                            //champs qui va s'afficher juste pour l'inscription
+                            //champs qui va s'afficher juste pour l'inscription
+                            //champs qui va s'afficher juste pour l'inscription
+                            //champs qui va s'afficher juste pour l'inscription
+                            _authMode == AuthMode.Signup
+                                ? Container(
+                                    margin: EdgeInsets.only(
+                                        top: mediaQuery.size.width * 0.030),
+                                    child: Row(
+                                      children: [
+                                        //input numero
+                                        Expanded(
+                                          child: TextFormField(
+                                            decoration: const InputDecoration(
+                                              filled: true,
+                                              hintText:
+                                                  'Entrez votre mot de passe',
+                                              border: InputBorder.none,
+                                              hintStyle: TextStyle(
+                                                color: AppColor.appGrey,
+                                              ),
+                                              isDense: true,
+                                              contentPadding:
+                                                  EdgeInsets.all(12),
+                                            ),
+                                            /*onSaved: (value) => {
+                                        _personnalData['nom'] = value!,
+                                      },*/
+                                            obscureText: true,
+                                            keyboardType:
+                                                TextInputType.visiblePassword,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+
+                            //fin des champs juste pour l'inscription
+                            //fin des champs juste pour l'inscription
+                            //fin des champs juste pour l'inscription
+                            //fin des champs juste pour l'inscription
                             //button d'inscription
                             Container(
                               margin: EdgeInsets.only(
@@ -152,8 +254,7 @@ class _NumberLoginScreenState extends State<NumberLoginScreen> {
                                           textStyle:
                                               const TextStyle(fontSize: 20),
                                         ),
-                                        onPressed: () => print(
-                                            'Inscription reussi effectue'),
+                                        onPressed: _submit,
                                         child: Text(
                                           _authMode == AuthMode.Login
                                               ? 'Connexion'

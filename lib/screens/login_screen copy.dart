@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tuma/models/http_exceptions.dart';
 import 'package:tuma/providers/auth_provider.dart';
@@ -25,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   AuthMode _authMode = AuthMode.Login;
   //stockons l'email et le mot de passe
   Map<String, String> _authData = {
-    'phone_number': '',
+    'email': '',
     'password': '',
   };
 
@@ -67,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
           TextButton(
               onPressed: () {
                 Provider.of<AuthProvider>(context, listen: false).login(
-                    _authData['phone_number'].toString(),
+                    _authData['email'].toString(),
                     _authData['password'].toString());
 
                 Navigator.of(context).pop();
@@ -107,33 +106,25 @@ class _LoginScreenState extends State<LoginScreen> {
         //logger l'utilisateur
         //print('Logger');
         await Provider.of<AuthProvider>(context, listen: false).login(
-          _authData['phone_number'].toString(),
-          _authData['password'].toString(),
-        );
+            _authData['email'].toString(), _authData['password'].toString());
       } else {
         //enregistrer l'utilisateur
         //print('Inscrit');
         await Provider.of<AuthProvider>(context, listen: false)
-            .registerWithPhoneNumber(
-              _authData['phone_number'].toString(),
-              _authData['password'].toString(),
-            )
-            .then(
-              (_) => _showInscriptionDialog(
-                _authData['phone_number'].toString(),
-                _authData['password'].toString(),
-              ),
-            );
+            .register(
+                _authData['email'].toString(), _authData['password'].toString())
+            .then((_) => _showInscriptionDialog(_authData['email'].toString(),
+                _authData['password'].toString()));
       }
     } on HttpExceptions catch (error) {
       var messageError = 'Erreur d\'authentification';
       if (error.toString().contains('Unauthorized')) {
-        messageError = 'Numero ou mot de passe incorrect, veuillez réessayer ';
+        messageError = 'Email ou mot de passe incorrect, veuillez réessayer ';
       } else if (error
           .toString()
-          .contains('The phone number has already been taken.')) {
+          .contains('The email has already been taken.')) {
         messageError =
-            'Numero de téléphone déjà utilisé par un autre utilisateur, veuillez changer de numéro';
+            'Email déjà utilisé par un autre utilisateur, veuillez changer d’adresse email';
       } else {
         messageError = 'Probleme de connexion a votre compte';
       }
@@ -203,10 +194,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: mediaQuery.size.height * 0.42,
                       child: TextFormField(
                         decoration: InputDecoration(
-                          counterText: '',
                           filled: true,
                           fillColor: AppColor.appFillLoginColor,
-                          hintText: 'Numero de telephone',
+                          hintText: 'Email',
                           hintStyle: TextStyle(
                               fontFamily: 'Inter',
                               fontWeight: FontWeight.w200,
@@ -238,19 +228,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: AppColor.appRed, width: 0.0),
                           ),
                         ),
-                        keyboardType: TextInputType.number,
-                        maxLength: 9,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp("[0-9]"))
-                        ],
+                        keyboardType: TextInputType.emailAddress,
                         validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Numero de telephone invalide';
+                          if (value!.isEmpty ||
+                              !value.contains('@') ||
+                              !value.contains('.')) {
+                            return 'L\'Email est invalide';
                           }
                           return null;
                         },
                         onSaved: (value) {
-                          _authData['phone_number'] = value!;
+                          _authData['email'] = value!;
                         },
                       ),
                     ),
