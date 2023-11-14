@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/widgets/setting_cart_widget.dart';
 
@@ -12,6 +15,17 @@ class PersonnalInformation extends StatefulWidget {
 }
 
 class _PersonnalInformationState extends State<PersonnalInformation> {
+  Future<String> getFirstname() async {
+    final String firstname;
+
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    firstname = userData['firstname'].toString();
+
+    return firstname;
+  }
+
   //pour nous permettre d'avoir acces au input du formulaire
   final GlobalKey<FormState> _formKey = GlobalKey();
   //stockons les informations du formualaire dans un map
@@ -44,6 +58,7 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
                                 color: AppColor.appGrey,
                               ),
                             ),
+                            initialValue: 'initial',
                             onSaved: (value) => {
                               _personnalData['nom'] = value!,
                             },

@@ -9,6 +9,8 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
   String? _userId;
+  String? _firstname;
+  String? _lastname;
 
   final String host = Host.host;
 
@@ -155,6 +157,8 @@ class AuthProvider with ChangeNotifier {
 
       _token = token;
       _userId = responseData['user']['id'].toString();
+      _firstname = responseData['user']['firstname'].toString();
+      _lastname = responseData['user']['lastname'].toString();
 
       //print('Your credential' + _userId.toString() + _token.toString());
 
@@ -167,6 +171,8 @@ class AuthProvider with ChangeNotifier {
         {
           'token': _token,
           'userId': _userId,
+          'firstname': _firstname,
+          'lastname': _lastname,
         },
       );
       localStorage.setString('userData', userData);
@@ -220,5 +226,45 @@ class AuthProvider with ChangeNotifier {
     _userId = null;
     _token = null;
     notifyListeners();
+  }
+
+  //Ici on fera la mise a jour du mot de passe de l'utilisateur
+
+  Future<void> updateUserPassword(
+      String oldPassword, String newPassword) async {
+    //je recupere les donnees stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['old_password'] = oldPassword;
+    map['new_password'] = newPassword;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/update-user-password',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['message'] != null) {
+        //print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
   }
 }

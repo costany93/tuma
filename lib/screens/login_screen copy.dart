@@ -75,18 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Je me connecte',
                 style: TextStyle(color: AppColor.appGreen),
               )),
-          /*FlatButton(
-              onPressed: () {
-                Provider.of<AuthProvider>(context, listen: false).login(
-                    _authData['email'].toString(),
-                    _authData['password'].toString());
-
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                'Je me connecte',
-                style: TextStyle(color: AppColor.appGreen),
-              ))*/
         ],
       ),
     );

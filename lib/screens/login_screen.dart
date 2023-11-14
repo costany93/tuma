@@ -121,15 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
               _authData['password'].toString(),
             )
             .then(
-              (_) => _showInscriptionDialog(
-                _authData['phone_number'].toString(),
-                _authData['password'].toString(),
-              ),
-              /*Provider.of<AuthProvider>(context, listen: false)
-                  .loginWithPhoneNumber(
+              (_) => /*_showInscriptionDialog(
                 _authData['phone_number'].toString(),
                 _authData['password'].toString(),
               ),*/
+                  Provider.of<AuthProvider>(context, listen: false)
+                      .loginWithPhoneNumber(
+                _authData['phone_number'].toString(),
+                _authData['password'].toString(),
+              ),
             );
       }
     } on HttpExceptions catch (error) {
