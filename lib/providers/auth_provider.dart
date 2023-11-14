@@ -17,10 +17,19 @@ class AuthProvider with ChangeNotifier {
   }
 
   // cette fonction nous permet de verifier si notre token est encore valide en regardant et en comparant sa date expiration a la date actuelle
-  String? get token {
+  //pour un token avec date d'expiration
+  String? get sectoken {
     if (_expiryDate != null &&
         _expiryDate!.isAfter(DateTime.now()) &&
         _token != null) {
+      return _token;
+    }
+    return null;
+  }
+
+  //pour un token sans date d'expiration
+  String? get token {
+    if (_token != null) {
       return _token;
     }
     return null;
@@ -120,45 +129,36 @@ class AuthProvider with ChangeNotifier {
   //Phone number authetication
   Future<void> loginWithPhoneNumber(String phone, String password) async {
     //print('Make your login logic here');
+    //on configure le headers
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+    };
     // This will be sent as form data in the post requst
     var map = Map<String, dynamic>();
-    map['email'] = phone;
+    map['phone_number'] = phone;
     map['password'] = password;
     try {
       var url = Uri.parse(
-        '$host/api/auth/login',
+        '$host/api/login',
       );
-      final response = await http.post(url, body: map
-          /* body: json.encode(
-        {'email': email, 'password': password},
-      ), */
-          );
+      final response = await http.post(url, body: map, headers: requestHeaders);
 
       final responseData = json.decode(response.body);
-      final token = responseData['access_token'];
-      //print(responseData['error']);
-      //on checke d'abord si nous avons un erreur dans la recuperation de notre token afin de recuperer notre utilisateur
-      if (responseData['error'] != null) {
-        throw HttpExceptions(responseData['error']);
-      }
 
-      //ici nous recuperons les informations sur l'utilisateur
-      Map<String, String> requestHeaders = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': "Bearer $token"
-      };
-      url = Uri.parse(
-        '$host/api/auth/profile',
-      );
-      final getUser = await http.post(url, headers: requestHeaders);
-      final userJson = json.decode(getUser.body);
+      //print(responseData);
+      //on checke d'abord si nous avons un erreur dans la recuperation de nos données
+      if (responseData['message'] != null) {
+        //print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      final token = responseData['authorization']['token'];
+
       _token = token;
-      _userId = userJson['id'].toString();
+      _userId = responseData['user']['id'].toString();
+
+      //print('Your credential' + _userId.toString() + _token.toString());
+
       //ici on converti la date d'expiration du token en une date exploitable sur flutter
-      _expiryDate = DateTime.now().add(
-          Duration(seconds: int.parse(responseData['expires_in'].toString())));
-      print(userJson);
 
       notifyListeners();
       //ici nous allons sauvegarder nos donnees utilisateur localement
@@ -167,7 +167,6 @@ class AuthProvider with ChangeNotifier {
         {
           'token': _token,
           'userId': _userId,
-          'expiryDate': _expiryDate!.toIso8601String(),
         },
       );
       localStorage.setString('userData', userData);
@@ -202,7 +201,7 @@ class AuthProvider with ChangeNotifier {
         throw HttpExceptions(responseData['phone_number'].join());
       }
       print(responseData['user'].toString() + ' its here');
-      //login(email, password);
+      loginWithPhoneNumber(phone, password);
       notifyListeners();
     } catch (error) {
       print(error.toString());
@@ -210,10 +209,16 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> logout() async {
+  Future<void> seclogout() async {
     _userId = null;
     _token = null;
     _expiryDate = null;
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    _userId = null;
+    _token = null;
     notifyListeners();
   }
 }

@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   //pour afficher une boite de dialog de nos erreurs
-  void _showInscriptionDialog(String email, String password) {
+  void _showInscriptionDialog(String phone, String password) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -66,11 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           TextButton(
               onPressed: () {
-                Provider.of<AuthProvider>(context, listen: false).login(
-                    _authData['phone_number'].toString(),
-                    _authData['password'].toString());
-
                 Navigator.of(context).pop();
+                Provider.of<AuthProvider>(context, listen: false)
+                    .loginWithPhoneNumber(
+                  _authData['phone_number'].toString(),
+                  _authData['password'].toString(),
+                );
               },
               child: const Text(
                 'Je me connecte',
@@ -106,7 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_authMode == AuthMode.Login) {
         //logger l'utilisateur
         //print('Logger');
-        await Provider.of<AuthProvider>(context, listen: false).login(
+        await Provider.of<AuthProvider>(context, listen: false)
+            .loginWithPhoneNumber(
           _authData['phone_number'].toString(),
           _authData['password'].toString(),
         );
@@ -123,6 +125,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 _authData['phone_number'].toString(),
                 _authData['password'].toString(),
               ),
+              /*Provider.of<AuthProvider>(context, listen: false)
+                  .loginWithPhoneNumber(
+                _authData['phone_number'].toString(),
+                _authData['password'].toString(),
+              ),*/
             );
       }
     } on HttpExceptions catch (error) {
