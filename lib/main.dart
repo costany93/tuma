@@ -46,7 +46,8 @@ class Tuma extends StatelessWidget {
                   SettingScreen.routeName: (context) => SettingScreen(),
                   TransfertScreen.routeName: (context) => TransfertScreen(),
                   NumberLoginScreen.routeName: (context) => NumberLoginScreen(),
-                  ReceiptScreen.routeName: (context) => ReceiptScreen()
+                  ReceiptScreen.routeName: (context) => ReceiptScreen(),
+                  HomePageScreen.routeName: (context) => HomePageScreen()
                 },
               )),
         ));

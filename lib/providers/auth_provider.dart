@@ -267,4 +267,43 @@ class AuthProvider with ChangeNotifier {
       throw error;
     }
   }
+
+  //Ici on fera la mise a jour du mot de passe de l'utilisateur
+
+  Future<void> updateUserInfo(String nom, String prenom) async {
+    //je recupere les donnees stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['firstname'] = prenom;
+    map['lastname'] = nom;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/update-user-profile-info',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['errors'] != null) {
+        print(responseData['errors']);
+        throw HttpExceptions(responseData['errors']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
 }

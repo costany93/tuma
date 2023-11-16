@@ -1,7 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tuma/models/http_exceptions.dart';
+import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/widgets/setting_cart_widget.dart';
 
@@ -15,21 +19,88 @@ class PersonnalInformation extends StatefulWidget {
 }
 
 class _PersonnalInformationState extends State<PersonnalInformation> {
-  Future<String> getFirstname() async {
-    final String firstname;
-
-    final localStorage = await SharedPreferences.getInstance();
-    final userDataJson = localStorage.getString('userData');
-    final userData = json.decode(userDataJson.toString());
-    firstname = userData['firstname'].toString();
-
-    return firstname;
-  }
-
   //pour nous permettre d'avoir acces au input du formulaire
   final GlobalKey<FormState> _formKey = GlobalKey();
   //stockons les informations du formualaire dans un map
   Map<String, String> _personnalData = {'nom': '', 'prenom': ''};
+
+  //pour afficher une boite de dialog de nos erreurs
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Oops'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('ok '),
+          )
+        ],
+      ),
+    );
+  }
+
+  //pour afficher une boite de dialog de nos erreurs
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text(
+          'Genial',
+          style: TextStyle(color: AppColor.appGreen),
+        ),
+        content:
+            Text('Vos informations personnelles ont été modifiez avec succès'),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/setting-screen');
+              },
+              child: const Text(
+                'merci',
+                style: TextStyle(color: AppColor.appGreen),
+              )),
+        ],
+      ),
+    );
+  }
+
+  //la fonction de modification des informations personnelles
+  Future<void> _submit() async {
+    //si notre formulaire n'est pas valide on ne faiit rien
+    if (!_formKey.currentState!.validate()) {
+      // Invalid!
+      return;
+    }
+    _formKey.currentState!.save();
+    try {
+      await Provider.of<AuthProvider>(context, listen: false)
+          .updateUserInfo(
+            _personnalData['nom'].toString(),
+            _personnalData['prenom'].toString(),
+          )
+          .then((_) => _showSuccessDialog());
+    } on HttpExceptions catch (error) {
+      var messageError = 'Erreur d\'e modification du mot de passe';
+      if (error.toString().contains('User password don\'t match')) {
+        messageError =
+            'L\'ancien mot de passe du compte ne correspond pas, reessayez';
+      } else if (error
+          .toString()
+          .contains('The new password field is required.')) {
+        messageError = 'Le nouveau mot de passe est obligatoire';
+      } else {
+        messageError = 'Probleme de connexion a votre compte';
+      }
+      _showErrorDialog(messageError);
+    } catch (error) {
+      _showErrorDialog('une erreur s\'est produite veuillez reessayer');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
@@ -41,6 +112,7 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
               SettingCartWidget(
                 mediaQuery: mediaQuery,
                 settingInfo: 'Informations personnelles',
+                backRoute: '/setting-screen',
               ),
               Padding(
                 padding: EdgeInsets.all(mediaQuery.size.height * 0.05),
@@ -58,7 +130,17 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
                                 color: AppColor.appGrey,
                               ),
                             ),
-                            initialValue: 'initial',
+                            initialValue: '',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z]'))
+                            ],
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Champs nom vide, entrez un nom valide';
+                              }
+                              return null;
+                            },
                             onSaved: (value) => {
                               _personnalData['nom'] = value!,
                             },
@@ -73,6 +155,16 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
                                 color: AppColor.appGrey,
                               ),
                             ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z]'))
+                            ],
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Champs prénom vide, entrez un nom valide';
+                              }
+                              return null;
+                            },
                             onSaved: (value) => {
                               _personnalData['prenom'] = value!,
                             },
@@ -108,10 +200,7 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
                                       primary: AppColor.appWhite,
                                       textStyle: const TextStyle(fontSize: 20),
                                     ),
-                                    onPressed: () => print(_personnalData['nom']
-                                            .toString() +
-                                        ' ' +
-                                        _personnalData['prenom'].toString()),
+                                    onPressed: _submit,
                                     child: Text('Modifier'),
                                   ),
                                 ),

@@ -11,6 +11,7 @@ import 'package:tuma/widgets/tuma_cart.dart';
 
 class HomePageScreen extends StatelessWidget {
   HomePageScreen({Key? key}) : super(key: key);
+  static const routeName = '/home-page';
 
   @override
   Widget build(BuildContext context) {

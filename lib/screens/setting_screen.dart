@@ -21,6 +21,7 @@ class SettingScreen extends StatelessWidget {
             SettingCartWidget(
               mediaQuery: mediaQuery,
               settingInfo: 'Parametre de compte',
+              backRoute: '/home-page',
             ),
             //section parametre
             Container(

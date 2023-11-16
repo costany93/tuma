@@ -3,19 +3,20 @@ import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/logo_image.dart';
 
 class SettingCartWidget extends StatelessWidget {
-  const SettingCartWidget({
-    super.key,
-    required this.mediaQuery,
-    required this.settingInfo,
-  });
+  const SettingCartWidget(
+      {super.key,
+      required this.mediaQuery,
+      required this.settingInfo,
+      required this.backRoute});
 
   final MediaQueryData mediaQuery;
   final String settingInfo;
+  final String backRoute;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: AppColor.appBleu4),
+      decoration: BoxDecoration(color: AppColor.appRed),
       height: mediaQuery.size.height * 0.35,
       width: mediaQuery.size.width,
       child: Container(
@@ -26,7 +27,7 @@ class SettingCartWidget extends StatelessWidget {
             Align(
               alignment: Alignment.topLeft,
               child: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(context).pushNamed(backRoute),
                 icon: Icon(Icons.arrow_back),
               ),
             ),

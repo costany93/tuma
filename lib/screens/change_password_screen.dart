@@ -54,7 +54,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         actions: [
           TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context)..pushNamed('/setting-screen');
               },
               child: const Text(
                 'merci',
@@ -111,6 +111,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               SettingCartWidget(
                 mediaQuery: mediaQuery,
                 settingInfo: 'Modifier votre mot de passe',
+                backRoute: '/setting-screen',
               ),
               Container(
                 height: mediaQuery.size.height * 0.65,
