@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
 import 'package:tuma/utillities/host.dart';
@@ -268,7 +269,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  //Ici on fera la mise a jour du mot de passe de l'utilisateur
+  //Ici on fera la mise a jour les informations personnelles de l'utilsateur de l'utilisateur
 
   Future<void> updateUserInfo(String nom, String prenom) async {
     //je recupere les donnees stocker localement
@@ -299,6 +300,51 @@ class AuthProvider with ChangeNotifier {
       if (responseData['errors'] != null) {
         print(responseData['errors']);
         throw HttpExceptions(responseData['errors']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
+
+  //Ici on fera le transfert
+
+  Future<void> makeTransfert(
+      String n_destinataire, String montant, String password) async {
+    //je recupere le token stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['n_destinataire'] = n_destinataire;
+    map['montant'] = montant;
+    map['password'] = password;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/make-user-transfert',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['errors'] != null) {
+        print(responseData['errors']);
+        throw HttpExceptions(responseData['errors']);
+      }
+      if (responseData['message'] != null) {
+        print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
       }
       notifyListeners();
     } catch (error) {

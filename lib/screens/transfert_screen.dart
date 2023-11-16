@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:tuma/models/http_exceptions.dart';
+import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/logo_image.dart';
 
@@ -12,6 +15,106 @@ class TransfertScreen extends StatefulWidget {
 }
 
 class _TransfertScreenState extends State<TransfertScreen> {
+  //pour nous permettre d'avoir acces au input du formulaire
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  //stockons les informations du formulaire dans un map
+  Map<String, String> _transfertData = {
+    'n_destinataire': '',
+    'montant': '',
+    'password': ''
+  };
+
+  //pour afficher une boite de dialog de nos erreurs
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Oops', style: TextStyle(color: AppColor.appRed)),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('ok ', style: TextStyle(color: AppColor.appRed)),
+          )
+        ],
+      ),
+    );
+  }
+
+  //pour afficher une boite de dialog de nos erreurs
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text(
+          'Argent reçu',
+          style: TextStyle(color: AppColor.appGreen),
+        ),
+        content: Text('Transfert effectué avec succès'),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/home-page');
+              },
+              child: const Text(
+                'merci',
+                style: TextStyle(color: AppColor.appGreen),
+              )),
+        ],
+      ),
+    );
+  }
+
+  //la fonction de transferer de l'argent
+  Future<void> _submit() async {
+    //si notre formulaire n'est pas valide on ne faiit rien
+    if (!_formKey.currentState!.validate()) {
+      // Invalid!
+      return;
+    }
+    _formKey.currentState!.save();
+    print(_transfertData['n_destinataire'].toString() +
+        _transfertData['montant'].toString() +
+        _transfertData['password'].toString() +
+        'ici');
+    try {
+      await Provider.of<AuthProvider>(context, listen: false)
+          .makeTransfert(
+            _transfertData['n_destinataire'].toString(),
+            _transfertData['montant'].toString(),
+            _transfertData['password'].toString(),
+          )
+          .then((_) => _showSuccessDialog());
+    } on HttpExceptions catch (error) {
+      var messageError = 'Erreur d\'e modification du mot de passe';
+      if (error.toString().contains(
+          'Vous ne pouvez pas vous transferer de l\'argent a vous meme, entrez un autre numero de telephone')) {
+        messageError =
+            'Vous ne pouvez pas vous transferer de l\'argent a vous meme, entrez un autre numero de telephone';
+      } else if (error.toString().contains(
+          'Solde insuffisant, veuillez recharger votre compte ou entrer un montant valide')) {
+        messageError =
+            'Solde insuffisant, veuillez recharger votre compte ou entrer un montant valide';
+      } else if (error
+          .toString()
+          .contains('Mot de passe incorrect, reessayez')) {
+        messageError = 'Mot de passe incorrect, reessayez';
+      } else if (error
+          .toString()
+          .contains('destinataire introuvable, reessayez')) {
+        messageError =
+            'Destinataire introuvable, entrez un numero valide et reessayez';
+      } else {
+        messageError = 'Veuillez vérifier les informations';
+      }
+      _showErrorDialog(messageError);
+    } catch (error) {
+      _showErrorDialog('une erreur s\'est produite veuillez reessayer');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
@@ -69,6 +172,7 @@ class _TransfertScreenState extends State<TransfertScreen> {
                   horizontal: mediaQuery.size.height * 0.05,
                 ),
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     children: [
                       //input numero du destinataire
@@ -76,6 +180,8 @@ class _TransfertScreenState extends State<TransfertScreen> {
                         child: TextFormField(
                           decoration: const InputDecoration(
                             hintText: 'Numero du destinataire',
+                            helperText: 'au format ** *** ** **',
+                            counterText: '',
                             border: OutlineInputBorder(),
                             hintStyle: TextStyle(
                               color: AppColor.appGrey,
@@ -83,13 +189,20 @@ class _TransfertScreenState extends State<TransfertScreen> {
                             isDense: true,
                             contentPadding: EdgeInsets.all(12),
                           ),
-                          /*onSaved: (value) => {
-                                  _personnalData['nom'] = value!,
-                                },*/
+                          onSaved: (value) => {
+                            _transfertData['n_destinataire'] = value!,
+                          },
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
                           ],
+                          maxLength: 9,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Numero de telephone vide';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       //input montant a transferer
@@ -107,10 +220,16 @@ class _TransfertScreenState extends State<TransfertScreen> {
                               isDense: true,
                               contentPadding: EdgeInsets.all(12),
                             ),
-                            /*onSaved: (value) => {
-                                    _personnalData['nom'] = value!,
-                                  },*/
+                            onSaved: (value) => {
+                              _transfertData['montant'] = value!,
+                            },
                             keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Montant vide';
+                              }
+                              return null;
+                            },
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                 RegExp("[0-9]"),
@@ -134,16 +253,16 @@ class _TransfertScreenState extends State<TransfertScreen> {
                               isDense: true,
                               contentPadding: EdgeInsets.all(12),
                             ),
-                            /*onSaved: (value) => {
-                                    _personnalData['nom'] = value!,
-                                  },*/
-                            keyboardType: TextInputType.number,
+                            onSaved: (value) => {
+                              _transfertData['password'] = value!,
+                            },
                             obscureText: true,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp("[0-9]"),
-                              )
-                            ],
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Mot de passe vide, entrez un mot de passe valide';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       ),
@@ -156,7 +275,7 @@ class _TransfertScreenState extends State<TransfertScreen> {
                           children: [
                             Text('Frais'),
                             Text(
-                              '4600 F',
+                              '0%',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -192,7 +311,7 @@ class _TransfertScreenState extends State<TransfertScreen> {
                                     primary: AppColor.appWhite,
                                     textStyle: const TextStyle(fontSize: 20),
                                   ),
-                                  onPressed: () => print('transfert effectue'),
+                                  onPressed: _submit,
                                   child: Text('Transferer'),
                                 ),
                               ),

@@ -16,7 +16,7 @@ class SettingCartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: AppColor.appRed),
+      decoration: BoxDecoration(color: AppColor.appBleu4),
       height: mediaQuery.size.height * 0.35,
       width: mediaQuery.size.width,
       child: Container(
