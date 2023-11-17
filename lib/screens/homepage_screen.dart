@@ -2,6 +2,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/transfert_screen.dart';
@@ -9,13 +10,31 @@ import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/widgets/transactions_widget.dart';
 import 'package:tuma/widgets/tuma_cart.dart';
 
-class HomePageScreen extends StatelessWidget {
+class HomePageScreen extends StatefulWidget {
   HomePageScreen({Key? key}) : super(key: key);
   static const routeName = '/home-page';
 
   @override
+  State<HomePageScreen> createState() => _HomePageScreenState();
+}
+
+class _HomePageScreenState extends State<HomePageScreen> {
+  //print(Provider.of<AuthProvider>(context, listen: false).getUser());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print(Provider.of<AuthProvider>(context, listen: false).getUser());
+    final localStorage = SharedPreferences.getInstance();
+    //localStorage.getString('userData');
+    print('home page');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(

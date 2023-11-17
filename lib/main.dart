@@ -10,6 +10,7 @@ import 'package:tuma/screens/receipt_screen.dart';
 import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/signin_screen.dart';
 import 'package:tuma/screens/transfert_screen.dart';
+import 'package:tuma/test/test_fecth_screen.dart';
 
 void main() {
   runApp(const Tuma());
@@ -34,8 +35,9 @@ class Tuma extends StatelessWidget {
                     primarySwatch: Colors.cyan,
                   ),
                 ),
-                home: authData.isAuth ? HomePageScreen() : LoginScreen(),
-                //home: LoginScreen(),
+                home: authData.isAuth ? TestFectData() : LoginScreen(),
+                //home: authData.isAuth ? HomePageScreen() : LoginScreen(),
+                //home: TestFectData(),
                 routes: {
                   LoginScreen.routeName: (context) => LoginScreen(),
                   SignIn.routeName: (context) => SignIn(),

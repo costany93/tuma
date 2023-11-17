@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
+import 'package:tuma/models/user_transaction_model.dart';
+import 'package:tuma/test/user_test_model.dart';
 import 'package:tuma/utillities/host.dart';
 import 'package:tuma/models/http_exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -350,6 +352,126 @@ class AuthProvider with ChangeNotifier {
     } catch (error) {
       print(error.toString());
       throw error;
+    }
+  }
+
+  //ici on recupere les informations d'un utilisateur
+  Future<UserTestModel> getUser() async {
+    //je recupere le token stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/get-user',
+      );
+      final response = await http.get(url, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['errors'] != null) {
+        print(responseData['errors']);
+        throw HttpExceptions(responseData['errors']);
+      }
+      if (responseData['message'] != null) {
+        print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      notifyListeners();
+      return UserTestModel.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
+
+  //ici on recupere les transactions d'un utilsateur
+  Future<List<UserTransactionModel>> getUserTransactions() async {
+    //je recupere le token stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    //print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/get-user-client-transactions',
+      );
+      final response = await http.get(url, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print('les transactions');
+      print(responseData);
+      print('les transactions');
+      /*if (responseData['errors'].toString() != null) {
+        print(responseData['errors'].toString());
+        throw HttpExceptions(responseData['errors'].toString());
+      }
+      if (responseData['message'].toString() != null) {
+        print(responseData['message'].toString());
+        throw HttpExceptions(responseData['message'].toString());
+      }*/
+
+      notifyListeners();
+      return responseData.map((e) => UserTransactionModel.fromJson(e)).toList();
+      //final List<UserTransactionModel> transactions = [];
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
+
+  Future<List<UserTransactionModel>> fetchTransactions() async {
+    //je recupere le token stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+    var url = Uri.parse(
+      '$host/api/get-user-client-transactions',
+    );
+    final response = await http.get(url, headers: requestHeaders);
+    ;
+    List<dynamic> result = json.decode(response.body);
+    result.forEach((element) {
+      print(element['montant']);
+    });
+    List<UserTransactionModel> listTransactions = [];
+    if (response.statusCode == 200) {
+      /*listTransactions =
+          result.map((e) => UserTransactionModel.fromJson(e)).toList();
+      listTransactions.forEach((element) {
+        print(element.montant);
+      });*/
+      result.forEach((element) {
+        listTransactions.add(UserTransactionModel(
+            montant: element['montant'], userId: element['id']));
+      });
+      listTransactions.forEach((element) {
+        print(element.montant.toString() + ' icici');
+      });
+      return listTransactions;
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 }
