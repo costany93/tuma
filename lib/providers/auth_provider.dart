@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
+import 'package:intl/intl.dart';
+import 'package:tuma/models/user_model.dart';
 import 'package:tuma/models/user_transaction_model.dart';
 import 'package:tuma/test/user_test_model.dart';
 import 'package:tuma/utillities/host.dart';
@@ -356,7 +358,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   //ici on recupere les informations d'un utilisateur
-  Future<UserTestModel> getUser() async {
+  Future<UserModel> getUser() async {
     //je recupere le token stocker localement
     final localStorage = await SharedPreferences.getInstance();
     final userDataJson = localStorage.getString('userData');
@@ -386,7 +388,7 @@ class AuthProvider with ChangeNotifier {
         throw HttpExceptions(responseData['message']);
       }
       notifyListeners();
-      return UserTestModel.fromJson(
+      return UserModel.fromJson(
           jsonDecode(response.body) as Map<String, dynamic>);
     } catch (error) {
       print(error.toString());
@@ -395,7 +397,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   //ici on recupere les transactions d'un utilsateur
-  Future<List<UserTransactionModel>> getUserTransactions() async {
+  /* Future<List<UserTransactionModel>> getUserTransactions() async {
     //je recupere le token stocker localement
     final localStorage = await SharedPreferences.getInstance();
     final userDataJson = localStorage.getString('userData');
@@ -434,9 +436,9 @@ class AuthProvider with ChangeNotifier {
       print(error.toString());
       throw error;
     }
-  }
+  }*/
 
-  Future<List<UserTransactionModel>> fetchTransactions() async {
+  Future<List<UserTransaction>> fetchTransactions() async {
     //je recupere le token stocker localement
     final localStorage = await SharedPreferences.getInstance();
     final userDataJson = localStorage.getString('userData');
@@ -452,10 +454,10 @@ class AuthProvider with ChangeNotifier {
     final response = await http.get(url, headers: requestHeaders);
     ;
     List<dynamic> result = json.decode(response.body);
-    result.forEach((element) {
-      print(element['montant']);
-    });
-    List<UserTransactionModel> listTransactions = [];
+    // result.forEach((element) {
+    //   print(element['montant']);
+    // });
+    List<UserTransaction> listTransactions = [];
     if (response.statusCode == 200) {
       /*listTransactions =
           result.map((e) => UserTransactionModel.fromJson(e)).toList();
@@ -463,12 +465,24 @@ class AuthProvider with ChangeNotifier {
         print(element.montant);
       });*/
       result.forEach((element) {
-        listTransactions.add(UserTransactionModel(
-            montant: element['montant'], userId: element['id']));
+        listTransactions.add(
+          UserTransaction(
+              userId: element['id'],
+              transaction_id: element['transaction_id'],
+              n_expediteur: element['n_expediteur'],
+              n_destinataire: element['n_destinataire'],
+              montant: element['montant'],
+              statut: element['statut'],
+              is_transfert: element['is_transfert'],
+              is_depot: element['is_depot'],
+              is_retrait: element['is_retrait'],
+              date_transactions: DateFormat('y-M-d H:m:s')
+                  .parse(element['date_transactions'])),
+        );
       });
-      listTransactions.forEach((element) {
-        print(element.montant.toString() + ' icici');
-      });
+      // listTransactions.forEach((element) {
+      //   print(element.montant.toString() + ' icici');
+      // });
       return listTransactions;
     } else {
       throw Exception('Failed to load data');

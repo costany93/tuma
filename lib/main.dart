@@ -35,8 +35,8 @@ class Tuma extends StatelessWidget {
                     primarySwatch: Colors.cyan,
                   ),
                 ),
-                home: authData.isAuth ? TestFectData() : LoginScreen(),
-                //home: authData.isAuth ? HomePageScreen() : LoginScreen(),
+                //home: authData.isAuth ? TestFectData() : LoginScreen(),
+                home: authData.isAuth ? HomePageScreen() : LoginScreen(),
                 //home: TestFectData(),
                 routes: {
                   LoginScreen.routeName: (context) => LoginScreen(),

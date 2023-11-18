@@ -2,9 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:tuma/utillities/app_colors.dart';
+import 'package:tuma/utillities/number_formater.dart';
 
-class TumaCart extends StatelessWidget {
-  const TumaCart({Key? key}) : super(key: key);
+class TumaCart extends StatefulWidget {
+  const TumaCart({required this.solde});
+  final int solde;
+
+  @override
+  State<TumaCart> createState() => _TumaCartState();
+}
+
+class _TumaCartState extends State<TumaCart> {
+  bool _hideSolde = true;
+
+  _changeSoldeHide() {
+    if (_hideSolde == false) {
+      setState(() {
+        _hideSolde = true;
+        //print('the hide solde is ' + _hideSolde.toString());
+      });
+    } else {
+      setState(() {
+        _hideSolde = false;
+        //print('the hide solde is ' + _hideSolde.toString());
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +101,10 @@ class TumaCart extends StatelessWidget {
                         ),
                         RichText(
                           text: TextSpan(
-                              text: '200 000',
+                              text: _hideSolde
+                                  ? NumberFormater()
+                                      .formaterNumber(widget.solde)
+                                  : '*******',
                               style: TextStyle(
                                   fontSize: mediaQuery.size.height * 0.04,
                                   fontFamily: 'Inter',
@@ -86,7 +112,7 @@ class TumaCart extends StatelessWidget {
                                   color: AppColor.appBlack),
                               children: [
                                 TextSpan(
-                                  text: ' F',
+                                  text: _hideSolde ? ' F' : '',
                                   style: TextStyle(
                                     fontSize: mediaQuery.size.height * 0.02,
                                     fontFamily: 'Inter',
@@ -102,11 +128,13 @@ class TumaCart extends StatelessWidget {
                     height: constraints.maxHeight * 0.2,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
+                      children: [
                         IconButton(
-                          onPressed: null,
+                          onPressed: _changeSoldeHide,
                           icon: Icon(
-                            Icons.visibility_off_outlined,
+                            _hideSolde
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility,
                             color: AppColor.appWhite,
                           ),
                         ),
