@@ -9,6 +9,10 @@ class UserTransaction {
   final int is_depot;
   final int is_retrait;
   final DateTime date_transactions;
+  final String expediteur_firstname;
+  final String expediteur_phone_number;
+  final String destinataire_firstname;
+  final String destinataire_phone_number;
 
   UserTransaction({
     required this.userId,
@@ -21,5 +25,9 @@ class UserTransaction {
     required this.is_depot,
     required this.is_retrait,
     required this.date_transactions,
+    required this.expediteur_firstname,
+    required this.expediteur_phone_number,
+    required this.destinataire_firstname,
+    required this.destinataire_phone_number,
   });
 }

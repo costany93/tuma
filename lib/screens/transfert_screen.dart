@@ -5,6 +5,7 @@ import 'package:tuma/models/http_exceptions.dart';
 import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/logo_image.dart';
+import 'package:tuma/utillities/number_formater.dart';
 
 class TransfertScreen extends StatefulWidget {
   const TransfertScreen({super.key});
@@ -118,6 +119,8 @@ class _TransfertScreenState extends State<TransfertScreen> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -148,7 +151,8 @@ class _TransfertScreenState extends State<TransfertScreen> {
                   children: [
                     Text('Solde'),
                     Text(
-                      '200 000 F',
+                      NumberFormater().formaterNumber(arguments['solde']) +
+                          ' F',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

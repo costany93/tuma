@@ -230,6 +230,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() async {
     _userId = null;
     _token = null;
+    print(_token);
     notifyListeners();
   }
 
@@ -467,17 +468,23 @@ class AuthProvider with ChangeNotifier {
       result.forEach((element) {
         listTransactions.add(
           UserTransaction(
-              userId: element['id'],
-              transaction_id: element['transaction_id'],
-              n_expediteur: element['n_expediteur'],
-              n_destinataire: element['n_destinataire'],
-              montant: element['montant'],
-              statut: element['statut'],
-              is_transfert: element['is_transfert'],
-              is_depot: element['is_depot'],
-              is_retrait: element['is_retrait'],
-              date_transactions: DateFormat('y-M-d H:m:s')
-                  .parse(element['date_transactions'])),
+            userId: element['id'],
+            transaction_id: element['transaction_id'],
+            n_expediteur: element['n_expediteur'],
+            n_destinataire: element['n_destinataire'],
+            montant: element['montant'],
+            statut: element['statut'],
+            is_transfert: element['is_transfert'],
+            is_depot: element['is_depot'],
+            is_retrait: element['is_retrait'],
+            date_transactions: DateFormat('y-M-d H:m:s').parse(
+              element['date_transactions'],
+            ),
+            expediteur_firstname: element['expediteur_firstname'],
+            expediteur_phone_number: element['expediteur_phone_number'],
+            destinataire_firstname: element['destinataire_firstname'],
+            destinataire_phone_number: element['destinataire_phone_number'],
+          ),
         );
       });
       // listTransactions.forEach((element) {
@@ -486,6 +493,44 @@ class AuthProvider with ChangeNotifier {
       return listTransactions;
     } else {
       throw Exception('Failed to load data');
+    }
+  }
+
+  //Ici on va annuler un transfert effecté
+
+  Future<void> cancelTransfert(String transaction_id) async {
+    //je recupere les donnees stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['transaction_id'] = transaction_id;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/cancel-user-transfert',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['message'] != null) {
+        print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
     }
   }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tuma/models/http_exceptions.dart';
+import 'package:tuma/providers/auth_provider.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:intl/intl.dart';
 import 'package:tuma/utillities/number_formater.dart';
@@ -11,6 +14,84 @@ class ReceiptScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    print('here is arguments');
+    print(arguments['montant']);
+
+    //pour afficher une boite de dialog de nos erreurs
+    void _showErrorDialog(String message) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Oops'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('ok '),
+            )
+          ],
+        ),
+      );
+    }
+
+    //pour afficher une boite de dialog de nos erreurs
+    void _showSuccessDialog() {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text(
+            'Genial',
+            style: TextStyle(color: AppColor.appGreen),
+          ),
+          content: Text('Transfert annulé avec succès'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context)..pushNamed('/home-page');
+                },
+                child: const Text(
+                  'merci',
+                  style: TextStyle(color: AppColor.appGreen),
+                )),
+          ],
+        ),
+      );
+    }
+
+//la fonction de modification du mot de passe
+    Future<void> _submit() async {
+      try {
+        await Provider.of<AuthProvider>(context, listen: false)
+            .cancelTransfert(
+              arguments['transaction_id'],
+            )
+            .then((_) => _showSuccessDialog());
+      } on HttpExceptions catch (error) {
+        var messageError = 'Erreur d\'e modification du mot de passe';
+        if (error
+            .toString()
+            .contains('La transaction recherché n\'est plus disponible')) {
+          messageError = 'La transaction recherché n\'est plus disponible';
+        } else if (error.toString().contains(
+            'Vous ne pouvez pas annuler une transaction qui ne vous appartient pas')) {
+          messageError =
+              'Vous ne pouvez pas annuler une transaction qui ne vous appartient pas';
+        } else if (error.toString().contains(
+            'Vous ne pouvez pas annuler, une transaction deja annulé')) {
+          messageError =
+              'Vous ne pouvez pas annuler, une transaction deja annulé';
+        } else {
+          messageError = 'Probleme d\annulation du transfert';
+        }
+        _showErrorDialog(messageError);
+      } catch (error) {
+        _showErrorDialog('une erreur s\'est produite veuillez reessayer');
+      }
+    }
 
     //process du alert button
     // set up the buttons
@@ -61,14 +142,58 @@ class ReceiptScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          NumberFormater().formaterNumber(200000) + ' F',
+                          NumberFormater()
+                                  .formaterNumber(arguments['montant']) +
+                              ' F',
                           style: TextStyle(
                               fontSize: mediaQuery.size.width * 0.08,
                               fontWeight: FontWeight.bold),
                         ),
-                        Text(formaterPhoneNumber.format(786097344)),
+                        Text(
+                          /** ici on verifie si le numero de celui qui a envoye l'argent c'est notre numero(numero de l'utilisateur connecte) pour afficher son, et aussi on verifie si c'est un nouvelle utilisateur on affiche nouvelle utilisateur */
+                          arguments['n_expediteur'] ==
+                                  arguments['n_user_connecte']
+                              ? arguments['destinataire_firstname'] == 'new'
+                                  ? 'À nouvelle utilisateur '
+                                      .characters
+                                      .take(22)
+                                      .toString()
+                                  : 'À '.characters.take(22).toString() +
+                                      arguments['destinataire_firstname']
+                              : arguments['expediteur_firstname'] == 'new'
+                                  ? 'De nouvelle utilisateur'
+                                      .characters
+                                      .take(22)
+                                      .toString()
+                                  : 'De '.characters.take(22).toString() +
+                                      arguments['expediteur_firstname'],
+                        ),
                       ],
                     ),
+                  ),
+                ),
+              ),
+              //partie numero
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  margin: EdgeInsets.all(mediaQuery.size.width * 0.035),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Numéro',
+                        style: TextStyle(
+                            fontSize: mediaQuery.size.width * 0.05,
+                            color: AppColor.appGrey),
+                      ),
+                      Text(
+                        arguments['n_expediteur'] ==
+                                arguments['n_user_connecte']
+                            ? arguments['n_destinataire']
+                            : arguments['n_expediteur'],
+                      )
+                    ],
                   ),
                 ),
               ),
@@ -86,7 +211,9 @@ class ReceiptScreen extends StatelessWidget {
                             fontSize: mediaQuery.size.width * 0.05,
                             color: AppColor.appGrey),
                       ),
-                      Text(NumberFormater().formaterNumber(200000) + ' F')
+                      Text(NumberFormater()
+                              .formaterNumber(arguments['montant']) +
+                          ' F')
                     ],
                   ),
                 ),
@@ -105,7 +232,7 @@ class ReceiptScreen extends StatelessWidget {
                             fontSize: mediaQuery.size.width * 0.05,
                             color: AppColor.appGrey),
                       ),
-                      Text(NumberFormater().formaterNumber(150) + ' F')
+                      Text(NumberFormater().formaterNumber(0) + ' F')
                     ],
                   ),
                 ),
@@ -124,7 +251,7 @@ class ReceiptScreen extends StatelessWidget {
                             fontSize: mediaQuery.size.width * 0.05,
                             color: AppColor.appGrey),
                       ),
-                      Text('Effectué')
+                      Text(arguments['statut'] == 1 ? 'Effectué' : 'Annulé')
                     ],
                   ),
                 ),
@@ -143,7 +270,7 @@ class ReceiptScreen extends StatelessWidget {
                             fontSize: mediaQuery.size.width * 0.05,
                             color: AppColor.appGrey),
                       ),
-                      Text('25 octobre 2023 16h11')
+                      Text(arguments['date_transactions'].toString())
                     ],
                   ),
                 ),
@@ -170,21 +297,21 @@ class ReceiptScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: mediaQuery.size.height * 0.25,
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.all(16.0),
-                            primary: AppColor.appWhite,
-                            textStyle: const TextStyle(fontSize: 20),
-                          ),
-                          onPressed: () => {
-                            showDialog(
-                                context: context, builder: ((context) => alert))
-                          },
-                          child: Text('Annuler'),
-                        ),
-                      ),
+                      arguments['n_expediteur'] == arguments['n_user_connecte']
+                          ? SizedBox(
+                              width: mediaQuery.size.height * 0.25,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.all(16.0),
+                                  primary: AppColor.appWhite,
+                                  textStyle: const TextStyle(fontSize: 20),
+                                ),
+                                onPressed:
+                                    arguments['statut'] == 1 ? _submit : null,
+                                child: Text('Annuler'),
+                              ),
+                            )
+                          : Text(''),
                     ],
                   ),
                 ),

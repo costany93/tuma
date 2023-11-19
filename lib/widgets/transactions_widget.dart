@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:tuma/screens/receipt_screen.dart';
 import 'package:tuma/utillities/app_colors.dart';
 
 class TransactionWidget extends StatelessWidget {
@@ -16,6 +17,10 @@ class TransactionWidget extends StatelessWidget {
     required this.is_retrait,
     required this.date_transactions,
     required this.n_user_connecte,
+    required this.expediteur_firstname,
+    required this.expediteur_phone_number,
+    required this.destinataire_firstname,
+    required this.destinataire_phone_number,
   });
 
   final int userId;
@@ -29,12 +34,32 @@ class TransactionWidget extends StatelessWidget {
   final int is_retrait;
   final DateTime date_transactions;
   final String n_user_connecte;
+  final String expediteur_firstname;
+  final String expediteur_phone_number;
+  final String destinataire_firstname;
+  final String destinataire_phone_number;
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     return InkWell(
-      onTap: () => print('transactions'),
+      onTap: () => Navigator.of(context).pushNamed('/receipt', arguments: {
+        'userId': userId,
+        'transaction_id': transaction_id,
+        'n_expediteur': n_expediteur,
+        'n_destinataire': n_destinataire,
+        'montant': montant,
+        'statut': statut,
+        'is_transfert': is_transfert,
+        'is_depot': is_depot,
+        'is_retrait': is_retrait,
+        'date_transactions': date_transactions,
+        'n_user_connecte': n_user_connecte,
+        'expediteur_firstname': expediteur_firstname,
+        'expediteur_phone_number': expediteur_phone_number,
+        'destinataire_firstname': destinataire_firstname,
+        'destinataire_phone_number': destinataire_phone_number,
+      }),
       child: Container(
         margin: EdgeInsets.symmetric(
             horizontal: mediaQuery.size.height * 0.03,
@@ -60,9 +85,22 @@ class TransactionWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  /** ici on verifie si le numero de celui qui a envoye l'argent c'est notre numero(numero de l'utilisateur connecte) pour afficher son, et aussi on verifie si c'est un nouvelle utilisateur on affiche nouvelle utilisateur */
                   n_expediteur == n_user_connecte
-                      ? 'À ' + n_destinataire
-                      : 'De ' + n_expediteur,
+                      ? destinataire_firstname == 'new'
+                          ? 'À nouvelle utilisateur '
+                              .characters
+                              .take(22)
+                              .toString()
+                          : 'À '.characters.take(22).toString() +
+                              destinataire_firstname
+                      : expediteur_firstname == 'new'
+                          ? 'De nouvelle utilisateur'
+                              .characters
+                              .take(22)
+                              .toString()
+                          : 'De '.characters.take(22).toString() +
+                              expediteur_firstname,
                   style: TextStyle(
                     fontSize: mediaQuery.size.height * 0.020,
                     fontFamily: 'Inter',
@@ -72,7 +110,13 @@ class TransactionWidget extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      n_expediteur == n_user_connecte ? 'Envoyé' : 'Reçu',
+                      n_expediteur == n_user_connecte
+                          ? statut == 1
+                              ? 'Envoyé'
+                              : 'Annulé'
+                          : statut == 1
+                              ? 'Reçu'
+                              : 'Annulé',
                       style: TextStyle(
                         fontSize: mediaQuery.size.height * 0.015,
                         fontFamily: 'Inter',
@@ -82,8 +126,12 @@ class TransactionWidget extends StatelessWidget {
                     ),
                     Icon(
                       n_expediteur == n_user_connecte
-                          ? Icons.arrow_downward
-                          : Icons.arrow_upward,
+                          ? statut == 1
+                              ? Icons.arrow_downward
+                              : Icons.cancel_outlined
+                          : statut == 1
+                              ? Icons.arrow_upward
+                              : Icons.cancel_outlined,
                       color: n_expediteur == n_user_connecte
                           ? Color.fromARGB(255, 203, 78, 78)
                           : Color(0XFF4ECB71),
