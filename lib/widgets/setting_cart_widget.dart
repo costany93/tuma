@@ -46,7 +46,7 @@ class SettingCartWidget extends StatelessWidget {
                   child: Text(
                     settingInfo,
                     style: TextStyle(
-                        fontSize: mediaQuery.size.width * 0.05,
+                        fontSize: mediaQuery.size.width * 0.04,
                         fontWeight: FontWeight.bold),
                   ),
                 ),

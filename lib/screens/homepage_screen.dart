@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuma/models/user_model.dart';
 import 'package:tuma/models/user_transaction_model.dart';
 import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/screens/login_screen.dart';
+import 'package:tuma/screens/personnal_information.dart';
 import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/transfert_screen.dart';
 import 'package:tuma/test/user_test_model.dart';

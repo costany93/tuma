@@ -107,6 +107,11 @@ class _TransfertScreenState extends State<TransfertScreen> {
           .contains('destinataire introuvable, reessayez')) {
         messageError =
             'Destinataire introuvable, entrez un numero valide et reessayez';
+        //Veuillez mettre a jour vos informations personnelles avant de
+      } else if (error.toString().contains('nouvelle utilisateur, reessayez')) {
+        messageError =
+            'Veuillez mettre à jour vos informations personnelles avant de de pouvoir transferer des fonds';
+        //Veuillez mettre a jour vos informations personnelles avant de
       } else {
         messageError = 'Veuillez vérifier les informations';
       }

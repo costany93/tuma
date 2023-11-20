@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuma/models/http_exceptions.dart';
 import 'package:tuma/models/user_model.dart';
 import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/widgets/setting_cart_widget.dart';
 
@@ -121,8 +122,8 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
             children: [
               SettingCartWidget(
                 mediaQuery: mediaQuery,
-                settingInfo: 'Informations personnelles',
-                backRoute: '/setting-screen',
+                settingInfo: 'Modifiez vos Informations personnelles',
+                backRoute: SettingScreen.routeName,
               ),
               Padding(
                 padding: EdgeInsets.all(mediaQuery.size.height * 0.05),
@@ -141,6 +142,8 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
                                   child: TextFormField(
                                     decoration: const InputDecoration(
                                       hintText: 'Nom',
+                                      helperText:
+                                          'Nom different de new, pour transferer des fonds',
                                       hintStyle: TextStyle(
                                         color: AppColor.appGrey,
                                       ),
@@ -166,6 +169,8 @@ class _PersonnalInformationState extends State<PersonnalInformation> {
                                   child: TextFormField(
                                     decoration: const InputDecoration(
                                       hintText: 'Prénom',
+                                      helperText:
+                                          'Prénom different de new, pour transferer des fonds',
                                       hintStyle: TextStyle(
                                         color: AppColor.appGrey,
                                       ),
