@@ -211,7 +211,7 @@ class AuthProvider with ChangeNotifier {
       if (responseData['phone_number'] != null) {
         throw HttpExceptions(responseData['phone_number'].join());
       }
-      print(responseData['user'].toString() + ' its here');
+      //print(responseData['user'].toString() + ' its here');
       loginWithPhoneNumber(phone, password);
       notifyListeners();
     } catch (error) {
@@ -232,6 +232,12 @@ class AuthProvider with ChangeNotifier {
     _token = null;
     print(_token);
     notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    //pour supprimer une donnees a la fois
+    //prefs.remove('userData');
+
+    // on supprime toutes les preferences de notre application stocker dans la memoire
+    prefs.clear();
   }
 
   //Ici on fera la mise a jour du mot de passe de l'utilisateur
@@ -364,6 +370,11 @@ class AuthProvider with ChangeNotifier {
     final localStorage = await SharedPreferences.getInstance();
     final userDataJson = localStorage.getString('userData');
     final userData = json.decode(userDataJson.toString());
+    if (userData == null) {
+      logout();
+      return UserModel(
+          userId: 0, firstname: '', lastname: '', solde: 0, phone_number: '');
+    }
     final updateToken = userData['token'];
     print(userData['token']);
     //header
@@ -444,6 +455,10 @@ class AuthProvider with ChangeNotifier {
     final localStorage = await SharedPreferences.getInstance();
     final userDataJson = localStorage.getString('userData');
     final userData = json.decode(userDataJson.toString());
+    if (userData == null) {
+      logout();
+      return [];
+    }
     final updateToken = userData['token'];
     Map<String, String> requestHeaders = {
       'Accept': 'application/json',
@@ -490,6 +505,7 @@ class AuthProvider with ChangeNotifier {
       // listTransactions.forEach((element) {
       //   print(element.montant.toString() + ' icici');
       // });
+      notifyListeners();
       return listTransactions;
     } else {
       throw Exception('Failed to load data');

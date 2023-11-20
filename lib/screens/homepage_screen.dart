@@ -12,6 +12,7 @@ import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/transfert_screen.dart';
 import 'package:tuma/test/user_test_model.dart';
 import 'package:tuma/utillities/app_colors.dart';
+import 'package:tuma/utillities/number_formater.dart';
 import 'package:tuma/widgets/transactions_widget.dart';
 import 'package:tuma/widgets/tuma_cart.dart';
 
@@ -32,6 +33,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
     FutureUser = AuthProvider().getUser();
   }
 
@@ -62,10 +69,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
                               ),
                             ),
                             IconButton(
-                              onPressed: () => Provider.of<AuthProvider>(
-                                      context,
-                                      listen: false)
-                                  .logout(),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushReplacementNamed('/');
+                                Provider.of<AuthProvider>(context,
+                                        listen: false)
+                                    .logout();
+                              },
                               icon: Icon(
                                 Icons.logout,
                                 color: AppColor.appBleu4,
@@ -92,7 +102,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
               ),*/
                         Center(
                           child: Text(
-                            'Bienvenue ' + snapshotUser.data!.lastname,
+                            'Bienvenue ' +
+                                snapshotUser.data!.firstname +
+                                ' ' +
+                                snapshotUser.data!.phone_number.toString(),
                             style: TextStyle(
                               fontSize: mediaQuery.size.height * 0.02,
                               fontFamily: 'Inter',
