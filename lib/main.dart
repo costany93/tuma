@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/screens/agent/depot_screen.dart';
+import 'package:tuma/screens/agent/retrait_screen.dart';
 import 'package:tuma/screens/change_password_screen.dart';
 import 'package:tuma/screens/homepage_screen.dart';
 import 'package:tuma/screens/login_screen.dart';
@@ -49,7 +51,9 @@ class Tuma extends StatelessWidget {
                   TransfertScreen.routeName: (context) => TransfertScreen(),
                   NumberLoginScreen.routeName: (context) => NumberLoginScreen(),
                   ReceiptScreen.routeName: (context) => ReceiptScreen(),
-                  HomePageScreen.routeName: (context) => HomePageScreen()
+                  HomePageScreen.routeName: (context) => HomePageScreen(),
+                  DepotScreen.routeName: (context) => DepotScreen(),
+                  RetraitScreen.routeName: (context) => RetraitScreen(),
                 },
               )),
         ));

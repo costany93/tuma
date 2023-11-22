@@ -373,7 +373,14 @@ class AuthProvider with ChangeNotifier {
     if (userData == null) {
       logout();
       return UserModel(
-          userId: 0, firstname: '', lastname: '', solde: 0, phone_number: '');
+          userId: 0,
+          firstname: '',
+          lastname: '',
+          solde: 0,
+          phone_number: '',
+          is_client: 0,
+          is_agent: 0,
+          is_admin: 0);
     }
     final updateToken = userData['token'];
     print(userData['token']);
@@ -480,6 +487,7 @@ class AuthProvider with ChangeNotifier {
       listTransactions.forEach((element) {
         print(element.montant);
       });*/
+      print(response.body);
       result.forEach((element) {
         listTransactions.add(
           UserTransaction(
