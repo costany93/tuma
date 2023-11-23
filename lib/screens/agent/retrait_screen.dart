@@ -50,10 +50,11 @@ class _RetraitScreenState extends State<RetraitScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text(
-          'Argent reçu',
+          'Retrait initialisé',
           style: TextStyle(color: AppColor.appGreen),
         ),
-        content: Text('Transfert effectué avec succès'),
+        content:
+            Text('Veuillez demander á l\'utilisateur de confirmer le retrait'),
         actions: [
           TextButton(
               onPressed: () {
@@ -76,24 +77,24 @@ class _RetraitScreenState extends State<RetraitScreen> {
       return;
     }
     _formKey.currentState!.save();
-    print(_transfertData['n_destinataire'].toString() +
-        _transfertData['montant'].toString() +
-        _transfertData['password'].toString() +
-        'ici');
+    // print(_transfertData['n_destinataire'].toString() +
+    //     _transfertData['montant'].toString() +
+    //     _transfertData['password'].toString() +
+    //     'ici');
     try {
       await Provider.of<AuthProvider>(context, listen: false)
-          .makeTransfert(
+          .initializeRetrait(
             _transfertData['n_destinataire'].toString(),
             _transfertData['montant'].toString(),
             _transfertData['password'].toString(),
           )
           .then((_) => _showSuccessDialog());
     } on HttpExceptions catch (error) {
-      var messageError = 'Erreur d\'e modification du mot de passe';
+      var messageError = 'Erreur d\'e ';
       if (error.toString().contains(
-          'Vous ne pouvez pas vous transferer de l\'argent a vous meme, entrez un autre numero de telephone')) {
+          'Vous ne pouvez pas retirer de l\'argent via votre propre compte agent, entrez un autre numero de telephone')) {
         messageError =
-            'Vous ne pouvez pas vous transferer de l\'argent a vous meme, entrez un autre numero de telephone';
+            'Vous ne pouvez pas retirer de l\'argent via votre propre compte agent, entrez un autre numero de telephone';
       } else if (error.toString().contains(
           'Solde insuffisant, veuillez recharger votre compte ou entrer un montant valide')) {
         messageError =
@@ -102,15 +103,23 @@ class _RetraitScreenState extends State<RetraitScreen> {
           .toString()
           .contains('Mot de passe incorrect, reessayez')) {
         messageError = 'Mot de passe incorrect, reessayez';
-      } else if (error
-          .toString()
-          .contains('destinataire introuvable, reessayez')) {
+      } else if (error.toString().contains('Client introuvable, reessayez')) {
         messageError =
-            'Destinataire introuvable, entrez un numero valide et reessayez';
+            'Client introuvable, entrez un numero valide et reessayez';
+        //Veuillez mettre a jour vos informations personnelles avant de
+      } else if (error.toString().contains(
+          'Depot impossible car le client est un nouvelle utilisateur, demandez lui de mettre a jour ces informations personnelles et reessayez')) {
+        messageError =
+            'Depot impossible car le client est un nouvelle utilisateur, demandez lui de mettre a jour ces informations personnelles et reessayez';
         //Veuillez mettre a jour vos informations personnelles avant de
       } else if (error.toString().contains('nouvelle utilisateur, reessayez')) {
         messageError =
-            'Veuillez mettre à jour vos informations personnelles avant de de pouvoir transferer des fonds';
+            'Veuillez mettre à jour vos informations personnelles avant de de pouvoir déposer des fonds à un client';
+        //Veuillez mettre a jour vos informations personnelles avant de
+      } else if (error.toString().contains(
+          'Dépot impossible car l\'utilisateur connecté n\'est pas un agent, reessayez')) {
+        messageError =
+            'Dépot impossible car l\'utilisateur connecté n\'est pas un agent, reessayez';
         //Veuillez mettre a jour vos informations personnelles avant de
       } else {
         messageError = 'Veuillez vérifier les informations';
@@ -320,7 +329,7 @@ class _RetraitScreenState extends State<RetraitScreen> {
                                     primary: AppColor.appWhite,
                                     textStyle: const TextStyle(fontSize: 20),
                                   ),
-                                  onPressed: () => print('retrait effectué'),
+                                  onPressed: _submit,
                                   child: Text('Retirer'),
                                 ),
                               ),

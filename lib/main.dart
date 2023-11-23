@@ -12,6 +12,7 @@ import 'package:tuma/screens/receipt_screen.dart';
 import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/signin_screen.dart';
 import 'package:tuma/screens/transfert_screen.dart';
+import 'package:tuma/screens/validate_retrait_screen.dart';
 import 'package:tuma/test/test_fecth_screen.dart';
 
 void main() {
@@ -54,6 +55,8 @@ class Tuma extends StatelessWidget {
                   HomePageScreen.routeName: (context) => HomePageScreen(),
                   DepotScreen.routeName: (context) => DepotScreen(),
                   RetraitScreen.routeName: (context) => RetraitScreen(),
+                  ValidateRetraitScreen.routeName: (context) =>
+                      ValidateRetraitScreen()
                 },
               )),
         ));

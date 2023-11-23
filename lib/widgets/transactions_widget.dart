@@ -96,15 +96,17 @@ class TransactionWidget extends StatelessWidget {
                                   .toString()
                               : 'À '.characters.take(22).toString() +
                                   destinataire_firstname
-                      : is_depot == 1
-                          ? 'Depot'
-                          : expediteur_firstname == 'new'
-                              ? 'De nouvelle utilisateur'
-                                  .characters
-                                  .take(22)
-                                  .toString()
-                              : 'De '.characters.take(22).toString() +
-                                  expediteur_firstname,
+                      : is_retrait == 1
+                          ? 'Retrait'
+                          : is_depot == 1
+                              ? 'Depot'
+                              : expediteur_firstname == 'new'
+                                  ? 'De nouvelle utilisateur'
+                                      .characters
+                                      .take(22)
+                                      .toString()
+                                  : 'De '.characters.take(22).toString() +
+                                      expediteur_firstname,
                   style: TextStyle(
                     fontSize: mediaQuery.size.height * 0.020,
                     fontFamily: 'Inter',
@@ -118,9 +120,11 @@ class TransactionWidget extends StatelessWidget {
                           ? statut == 1
                               ? 'Envoyé'
                               : 'Annulé'
-                          : statut == 1
-                              ? 'Reçu'
-                              : 'Annulé',
+                          : is_retrait == 1
+                              ? 'Retiré'
+                              : statut == 1
+                                  ? 'Reçu'
+                                  : 'Annulé',
                       style: TextStyle(
                         fontSize: mediaQuery.size.height * 0.015,
                         fontFamily: 'Inter',
@@ -133,12 +137,16 @@ class TransactionWidget extends StatelessWidget {
                           ? statut == 1
                               ? Icons.arrow_downward
                               : Icons.cancel_outlined
-                          : statut == 1
-                              ? Icons.arrow_upward
-                              : Icons.cancel_outlined,
+                          : is_retrait == 1
+                              ? Icons.arrow_downward
+                              : statut == 1
+                                  ? Icons.arrow_upward
+                                  : Icons.cancel_outlined,
                       color: n_expediteur == n_user_connecte
                           ? Color.fromARGB(255, 203, 78, 78)
-                          : Color(0XFF4ECB71),
+                          : is_retrait == 1
+                              ? Color.fromARGB(255, 203, 78, 78)
+                              : Color(0XFF4ECB71),
                       size: mediaQuery.size.height * 0.025,
                     )
                   ],

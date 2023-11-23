@@ -11,6 +11,7 @@ import 'package:tuma/screens/login_screen.dart';
 import 'package:tuma/screens/personnal_information.dart';
 import 'package:tuma/screens/setting_screen.dart';
 import 'package:tuma/screens/transfert_screen.dart';
+import 'package:tuma/screens/validate_retrait_screen.dart';
 import 'package:tuma/test/user_test_model.dart';
 import 'package:tuma/utillities/app_colors.dart';
 import 'package:tuma/utillities/number_formater.dart';
@@ -130,6 +131,24 @@ class _HomePageScreenState extends State<HomePageScreen> {
                                 // ),
                               ),
                               TumaCart(solde: snapshotUser.data!.solde),
+                              Container(
+                                width: mediaQuery.size.width * 0.8,
+                                margin: EdgeInsets.only(
+                                    top: mediaQuery.size.height * 0.02),
+                                child: TextButton(
+                                  child: Text('VALIDER UN RETRAIT'),
+                                  style: TextButton.styleFrom(
+                                      foregroundColor: AppColor.appWhite,
+                                      backgroundColor: AppColor.appBleu3,
+                                      textStyle: TextStyle(
+                                          fontSize:
+                                              mediaQuery.size.width * 0.04)),
+                                  onPressed: () {
+                                    Navigator.of(context).pushNamed(
+                                        ValidateRetraitScreen.routeName);
+                                  },
+                                ),
+                              ),
                               Container(
                                 margin: EdgeInsets.all(
                                     mediaQuery.size.height * 0.03),
@@ -255,7 +274,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                             arguments: {'solde': snapshotUser.data!.solde}),
                         backgroundColor: AppColor.appBleu3,
                         child: Icon(
-                          Icons.add,
+                          Icons.send,
                           size: mediaQuery.size.height * 0.05,
                           color: AppColor.appWhite,
                         ),

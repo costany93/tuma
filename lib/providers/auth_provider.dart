@@ -606,4 +606,188 @@ class AuthProvider with ChangeNotifier {
       throw error;
     }
   }
+
+  //depot a un utilisateur
+  Future<void> initializeRetrait(
+      String n_destinataire, String montant, String password) async {
+    //je recupere le token stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['n_destinataire'] = n_destinataire;
+    map['montant'] = montant;
+    map['password'] = password;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/initialize-user-retrait',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['errors'] != null) {
+        print(responseData['errors']);
+        throw HttpExceptions(responseData['errors']);
+      }
+      if (responseData['message'] != null) {
+        print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
+
+  Future<List<UserTransaction>> fetchRetraitTransactions() async {
+    //je recupere le token stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    if (userData == null) {
+      logout();
+      return [];
+    }
+    final updateToken = userData['token'];
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+    var url = Uri.parse(
+      '$host/api/get-user-retrait-initialize',
+    );
+    final response = await http.get(url, headers: requestHeaders);
+    ;
+    List<dynamic> result = json.decode(response.body);
+    // result.forEach((element) {
+    //   print(element['montant']);
+    // });
+    List<UserTransaction> listTransactions = [];
+    if (response.statusCode == 200) {
+      /*listTransactions =
+          result.map((e) => UserTransactionModel.fromJson(e)).toList();
+      listTransactions.forEach((element) {
+        print(element.montant);
+      });*/
+      print('////////////////\n\n');
+      print(response.body);
+      result.forEach((element) {
+        listTransactions.add(
+          UserTransaction(
+            userId: element['id'],
+            transaction_id: element['transaction_id'],
+            n_expediteur: element['n_expediteur'],
+            n_destinataire: element['n_destinataire'],
+            montant: element['montant'],
+            statut: element['statut'],
+            is_transfert: element['is_transfert'],
+            is_depot: element['is_depot'],
+            is_retrait: element['is_retrait'],
+            date_transactions: DateFormat('y-M-d H:m:s').parse(
+              element['date_transactions'],
+            ),
+            expediteur_firstname: 'empty',
+            expediteur_phone_number: 'empty',
+            destinataire_firstname: 'empty',
+            destinataire_phone_number: 'empty',
+          ),
+        );
+      });
+      // listTransactions.forEach((element) {
+      //   print(element.montant.toString() + ' icici');
+      // });
+      notifyListeners();
+      return listTransactions;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  //Ici on va annuler un transfert effecté
+
+  Future<void> validateUserRetrait(String transaction_id) async {
+    //je recupere les donnees stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['transaction_id'] = transaction_id;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/validate-user-retrait',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['message'] != null) {
+        print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
+
+  //Ici on va annuler un transfert effecté
+
+  Future<void> invalidateUserRetrait(String transaction_id) async {
+    //je recupere les donnees stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['transaction_id'] = transaction_id;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/invalidate-user-retrait',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['message'] != null) {
+        print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
 }
