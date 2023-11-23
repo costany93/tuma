@@ -557,4 +557,53 @@ class AuthProvider with ChangeNotifier {
       throw error;
     }
   }
+
+  ////////////
+  ////////////
+  //////////
+  //ici on va effectuer les transactions agent
+
+  //depot a un utilisateur
+  Future<void> makeDepot(
+      String n_destinataire, String montant, String password) async {
+    //je recupere le token stocker localement
+    final localStorage = await SharedPreferences.getInstance();
+    final userDataJson = localStorage.getString('userData');
+    final userData = json.decode(userDataJson.toString());
+    final updateToken = userData['token'];
+    print(userData['token']);
+    //header
+    Map<String, String> requestHeaders = {
+      'Accept': 'application/json',
+      'Authorization': "Bearer $updateToken"
+    };
+
+    //on cree un map pour stocker toutes nos donnees
+    var map = Map<String, dynamic>();
+    map['n_destinataire'] = n_destinataire;
+    map['montant'] = montant;
+    map['password'] = password;
+
+    try {
+      //on initialise l'url
+      var url = Uri.parse(
+        '$host/api/make-user-depot',
+      );
+      final response = await http.post(url, body: map, headers: requestHeaders);
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['errors'] != null) {
+        print(responseData['errors']);
+        throw HttpExceptions(responseData['errors']);
+      }
+      if (responseData['message'] != null) {
+        print(responseData['message']);
+        throw HttpExceptions(responseData['message']);
+      }
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+      throw error;
+    }
+  }
 }

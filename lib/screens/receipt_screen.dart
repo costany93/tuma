@@ -160,13 +160,15 @@ class ReceiptScreen extends StatelessWidget {
                                       .toString()
                                   : 'À '.characters.take(22).toString() +
                                       arguments['destinataire_firstname']
-                              : arguments['expediteur_firstname'] == 'new'
-                                  ? 'De nouvelle utilisateur'
-                                      .characters
-                                      .take(22)
-                                      .toString()
-                                  : 'De '.characters.take(22).toString() +
-                                      arguments['expediteur_firstname'],
+                              : arguments['is_depot'] == 1
+                                  ? 'Depot'
+                                  : arguments['expediteur_firstname'] == 'new'
+                                      ? 'De nouvelle utilisateur'
+                                          .characters
+                                          .take(22)
+                                          .toString()
+                                      : 'De '.characters.take(22).toString() +
+                                          arguments['expediteur_firstname'],
                         ),
                       ],
                     ),

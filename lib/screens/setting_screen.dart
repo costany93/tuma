@@ -53,7 +53,7 @@ class SettingScreen extends StatelessWidget {
                             mediaQuery: mediaQuery,
                             information: 'Appeler le service client',
                             iconsLeft: Icons.call,
-                            routePath: PersonnalInformation.routeName,
+                            routePath: SettingScreen.routeName,
                           ),
                         ],
                       ),

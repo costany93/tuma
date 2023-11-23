@@ -49,10 +49,10 @@ class _DepotScreenState extends State<DepotScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text(
-          'Argent reçu',
+          'Argent déposer',
           style: TextStyle(color: AppColor.appGreen),
         ),
-        content: Text('Transfert effectué avec succès'),
+        content: Text('Depot effectué avec succès'),
         actions: [
           TextButton(
               onPressed: () {
@@ -75,20 +75,20 @@ class _DepotScreenState extends State<DepotScreen> {
       return;
     }
     _formKey.currentState!.save();
-    print(_transfertData['n_destinataire'].toString() +
-        _transfertData['montant'].toString() +
-        _transfertData['password'].toString() +
-        'ici');
+    // print(_transfertData['n_destinataire'].toString() +
+    //     _transfertData['montant'].toString() +
+    //     _transfertData['password'].toString() +
+    //     'ici');
     try {
       await Provider.of<AuthProvider>(context, listen: false)
-          .makeTransfert(
+          .makeDepot(
             _transfertData['n_destinataire'].toString(),
             _transfertData['montant'].toString(),
             _transfertData['password'].toString(),
           )
           .then((_) => _showSuccessDialog());
     } on HttpExceptions catch (error) {
-      var messageError = 'Erreur d\'e modification du mot de passe';
+      var messageError = 'Erreur d\'e ';
       if (error.toString().contains(
           'Vous ne pouvez pas vous transferer de l\'argent a vous meme, entrez un autre numero de telephone')) {
         messageError =
@@ -107,9 +107,19 @@ class _DepotScreenState extends State<DepotScreen> {
         messageError =
             'Destinataire introuvable, entrez un numero valide et reessayez';
         //Veuillez mettre a jour vos informations personnelles avant de
+      } else if (error.toString().contains(
+          'Depot impossible car le client est un nouvelle utilisateur, demandez lui de mettre a jour ces informations personnelles et reessayez')) {
+        messageError =
+            'Depot impossible car le client est un nouvelle utilisateur, demandez lui de mettre a jour ces informations personnelles et reessayez';
+        //Veuillez mettre a jour vos informations personnelles avant de
       } else if (error.toString().contains('nouvelle utilisateur, reessayez')) {
         messageError =
-            'Veuillez mettre à jour vos informations personnelles avant de de pouvoir transferer des fonds';
+            'Veuillez mettre à jour vos informations personnelles avant de de pouvoir déposer des fonds à un client';
+        //Veuillez mettre a jour vos informations personnelles avant de
+      } else if (error.toString().contains(
+          'Dépot impossible car l\'utilisateur connecté n\'est pas un agent, reessayez')) {
+        messageError =
+            'Dépot impossible car l\'utilisateur connecté n\'est pas un agent, reessayez';
         //Veuillez mettre a jour vos informations personnelles avant de
       } else {
         messageError = 'Veuillez vérifier les informations';
@@ -320,7 +330,7 @@ class _DepotScreenState extends State<DepotScreen> {
                                     primary: AppColor.appWhite,
                                     textStyle: const TextStyle(fontSize: 20),
                                   ),
-                                  onPressed: () => print('Depot effectué'),
+                                  onPressed: _submit,
                                   child: Text('Depot'),
                                 ),
                               ),

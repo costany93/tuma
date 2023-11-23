@@ -87,20 +87,24 @@ class TransactionWidget extends StatelessWidget {
                 Text(
                   /** ici on verifie si le numero de celui qui a envoye l'argent c'est notre numero(numero de l'utilisateur connecte) pour afficher son, et aussi on verifie si c'est un nouvelle utilisateur on affiche nouvelle utilisateur */
                   n_expediteur == n_user_connecte
-                      ? destinataire_firstname == 'new'
-                          ? 'À nouvelle utilisateur '
-                              .characters
-                              .take(22)
-                              .toString()
-                          : 'À '.characters.take(22).toString() +
-                              destinataire_firstname
-                      : expediteur_firstname == 'new'
-                          ? 'De nouvelle utilisateur'
-                              .characters
-                              .take(22)
-                              .toString()
-                          : 'De '.characters.take(22).toString() +
-                              expediteur_firstname,
+                      ? is_depot == 1
+                          ? 'Depot'
+                          : destinataire_firstname == 'new'
+                              ? 'À nouvelle utilisateur '
+                                  .characters
+                                  .take(22)
+                                  .toString()
+                              : 'À '.characters.take(22).toString() +
+                                  destinataire_firstname
+                      : is_depot == 1
+                          ? 'Depot'
+                          : expediteur_firstname == 'new'
+                              ? 'De nouvelle utilisateur'
+                                  .characters
+                                  .take(22)
+                                  .toString()
+                              : 'De '.characters.take(22).toString() +
+                                  expediteur_firstname,
                   style: TextStyle(
                     fontSize: mediaQuery.size.height * 0.020,
                     fontFamily: 'Inter',
