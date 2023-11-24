@@ -3,6 +3,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:tuma/screens/receipt_screen.dart';
 import 'package:tuma/utillities/app_colors.dart';
+import 'package:tuma/utillities/number_formater.dart';
 
 class TransactionWidget extends StatelessWidget {
   const TransactionWidget({
@@ -157,7 +158,7 @@ class TransactionWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  montant.toString() + ' F',
+                  NumberFormater().formaterNumber(montant) + ' F',
                   style: TextStyle(
                     fontSize: mediaQuery.size.height * 0.024,
                     fontFamily: 'Inter',

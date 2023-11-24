@@ -133,6 +133,8 @@ class _DepotScreenState extends State<DepotScreen> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -167,7 +169,8 @@ class _DepotScreenState extends State<DepotScreen> {
                   children: [
                     Text('Solde'),
                     Text(
-                      NumberFormater().formaterNumber(200000) + ' F',
+                      NumberFormater().formaterNumber(arguments['solde']) +
+                          ' F',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

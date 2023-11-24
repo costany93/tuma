@@ -54,7 +54,7 @@ class _RetraitScreenState extends State<RetraitScreen> {
           style: TextStyle(color: AppColor.appGreen),
         ),
         content:
-            Text('Veuillez demander á l\'utilisateur de confirmer le retrait'),
+            Text('Veuillez demander à l\'utilisateur de confirmer le retrait'),
         actions: [
           TextButton(
               onPressed: () {
@@ -121,6 +121,10 @@ class _RetraitScreenState extends State<RetraitScreen> {
         messageError =
             'Dépot impossible car l\'utilisateur connecté n\'est pas un agent, reessayez';
         //Veuillez mettre a jour vos informations personnelles avant de
+      } else if (error.toString().contains('Solde Client est insuffisant')) {
+        messageError =
+            'Le solde du client est insuffisant, entrez un solde client valide';
+        //Veuillez mettre a jour vos informations personnelles avant de
       } else {
         messageError = 'Veuillez vérifier les informations';
       }
@@ -133,6 +137,8 @@ class _RetraitScreenState extends State<RetraitScreen> {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -166,7 +172,8 @@ class _RetraitScreenState extends State<RetraitScreen> {
                   children: [
                     Text('Solde'),
                     Text(
-                      NumberFormater().formaterNumber(200000) + ' F',
+                      NumberFormater().formaterNumber(arguments['solde']) +
+                          ' F',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

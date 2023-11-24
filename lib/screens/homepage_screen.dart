@@ -35,14 +35,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    FutureUser = AuthProvider().getUser();
+    FutureListTransaction = AuthProvider().fetchTransactions();
   }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    FutureUser = AuthProvider().getUser();
-    FutureListTransaction = AuthProvider().fetchTransactions();
   }
 
   @override
@@ -59,7 +59,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 builder: (context, snapshotUser) {
                   if (snapshotUser.hasData) {
                     return snapshotUser.data!.is_agent == 1
-                        ? AgentHomePage()
+                        ? AgentHomePage(solde: snapshotUser.data!.solde)
                         : Column(
                             children: [
                               Row(
@@ -287,3 +287,20 @@ class _HomePageScreenState extends State<HomePageScreen> {
             }));
   }
 }
+
+
+
+
+
+// FutureBuilder<UserModel>(
+//                 future: FutureUser,
+//                 builder: (context, snapshotUser) {
+//                   if (snapshotUser.hasData) {
+//                     return Container()
+//                      } else if (snapshotUser.hasError) {
+//                     return Text('${snapshotUser.error}');
+//                   }
+
+//                   // By default, show a loading spinner.
+//                   return const CircularProgressIndicator();
+//                 });
