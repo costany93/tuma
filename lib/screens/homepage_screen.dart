@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuma/models/user_model.dart';
 import 'package:tuma/models/user_transaction_model.dart';
 import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/screens/admin/admin_home.dart';
 import 'package:tuma/screens/agent/agent_home_page.dart';
 import 'package:tuma/screens/login_screen.dart';
 import 'package:tuma/screens/personnal_information.dart';
@@ -58,39 +59,41 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 future: FutureUser,
                 builder: (context, snapshotUser) {
                   if (snapshotUser.hasData) {
-                    return snapshotUser.data!.is_agent == 1
-                        ? AgentHomePage(solde: snapshotUser.data!.solde)
-                        : Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                    return snapshotUser.data!.is_admin == 1
+                        ? AdminHome()
+                        : snapshotUser.data!.is_agent == 1
+                            ? AgentHomePage(solde: snapshotUser.data!.solde)
+                            : Column(
                                 children: [
-                                  IconButton(
-                                    onPressed: () => Navigator.of(context)
-                                        .pushNamed(SettingScreen.routeName),
-                                    icon: Icon(
-                                      Icons.settings,
-                                      color: AppColor.appBleu4,
-                                    ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () => Navigator.of(context)
+                                            .pushNamed(SettingScreen.routeName),
+                                        icon: Icon(
+                                          Icons.settings,
+                                          color: AppColor.appBleu4,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          //Navigator.of(context).pop();
+                                          Navigator.of(context)
+                                              .pushReplacementNamed('/');
+                                          Provider.of<AuthProvider>(context,
+                                                  listen: false)
+                                              .logout();
+                                        },
+                                        icon: Icon(
+                                          Icons.logout,
+                                          color: AppColor.appBleu4,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  IconButton(
-                                    onPressed: () {
-                                      //Navigator.of(context).pop();
-                                      Navigator.of(context)
-                                          .pushReplacementNamed('/');
-                                      Provider.of<AuthProvider>(context,
-                                              listen: false)
-                                          .logout();
-                                    },
-                                    icon: Icon(
-                                      Icons.logout,
-                                      color: AppColor.appBleu4,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              /*Align(
+                                  /*Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
                   onPressed: () =>
@@ -107,152 +110,159 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   icon: Icon(Icons.logout),
                 ),
               ),*/
-                              Center(
-                                child: Text(
-                                  'Bienvenue ' +
-                                      snapshotUser.data!.firstname +
-                                      ' ' +
-                                      snapshotUser.data!.phone_number
-                                          .toString(),
-                                  style: TextStyle(
-                                    fontSize: mediaQuery.size.height * 0.02,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w600,
+                                  Center(
+                                    child: Text(
+                                      'Bienvenue ' +
+                                          snapshotUser.data!.firstname +
+                                          ' ' +
+                                          snapshotUser.data!.phone_number
+                                              .toString(),
+                                      style: TextStyle(
+                                        fontSize: mediaQuery.size.height * 0.02,
+                                        fontFamily: 'Inter',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+
+                                    // child: Text(
+                                    //   'Bienvenue',
+                                    //   style: TextStyle(
+                                    //     fontSize: mediaQuery.size.height * 0.03,
+                                    //     fontFamily: 'Inter',
+                                    //     fontWeight: FontWeight.w600,
+                                    //   ),
+                                    // ),
                                   ),
-                                ),
+                                  TumaCart(solde: snapshotUser.data!.solde),
+                                  Container(
+                                    width: mediaQuery.size.width * 0.8,
+                                    margin: EdgeInsets.only(
+                                        top: mediaQuery.size.height * 0.02),
+                                    child: TextButton(
+                                      child: Text('VALIDER UN RETRAIT'),
+                                      style: TextButton.styleFrom(
+                                          foregroundColor: AppColor.appWhite,
+                                          backgroundColor: AppColor.appBleu3,
+                                          textStyle: TextStyle(
+                                              fontSize: mediaQuery.size.width *
+                                                  0.04)),
+                                      onPressed: () {
+                                        Navigator.of(context).pushNamed(
+                                            ValidateRetraitScreen.routeName);
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.all(
+                                        mediaQuery.size.height * 0.03),
+                                    //height: mediaQuery.size.height * 0.04,
 
-                                // child: Text(
-                                //   'Bienvenue',
-                                //   style: TextStyle(
-                                //     fontSize: mediaQuery.size.height * 0.03,
-                                //     fontFamily: 'Inter',
-                                //     fontWeight: FontWeight.w600,
-                                //   ),
-                                // ),
-                              ),
-                              TumaCart(solde: snapshotUser.data!.solde),
-                              Container(
-                                width: mediaQuery.size.width * 0.8,
-                                margin: EdgeInsets.only(
-                                    top: mediaQuery.size.height * 0.02),
-                                child: TextButton(
-                                  child: Text('VALIDER UN RETRAIT'),
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: AppColor.appWhite,
-                                      backgroundColor: AppColor.appBleu3,
-                                      textStyle: TextStyle(
-                                          fontSize:
-                                              mediaQuery.size.width * 0.04)),
-                                  onPressed: () {
-                                    Navigator.of(context).pushNamed(
-                                        ValidateRetraitScreen.routeName);
-                                  },
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.all(
-                                    mediaQuery.size.height * 0.03),
-                                //height: mediaQuery.size.height * 0.04,
-
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          'Transactions',
-                                          style: TextStyle(
-                                            fontSize:
-                                                mediaQuery.size.height * 0.024,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Transactions',
+                                              style: TextStyle(
+                                                fontSize:
+                                                    mediaQuery.size.height *
+                                                        0.024,
+                                                fontFamily: 'Inter',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Container(
+                                              height: mediaQuery.size.height *
+                                                  0.008,
+                                              width:
+                                                  mediaQuery.size.width * 0.23,
+                                              color: AppColor.appBleu5,
+                                            )
+                                          ],
                                         ),
-                                        Container(
-                                          height:
-                                              mediaQuery.size.height * 0.008,
-                                          width: mediaQuery.size.width * 0.23,
-                                          color: AppColor.appBleu5,
+                                        IconButton(
+                                          onPressed: null,
+                                          icon: Icon(
+                                            Icons.short_text,
+                                            size: mediaQuery.size.height * 0.05,
+                                            color: AppColor.appBleu5,
+                                          ),
                                         )
                                       ],
                                     ),
-                                    IconButton(
-                                      onPressed: null,
-                                      icon: Icon(
-                                        Icons.short_text,
-                                        size: mediaQuery.size.height * 0.05,
-                                        color: AppColor.appBleu5,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: mediaQuery.size.height * 0.72,
-                                width: mediaQuery.size.height * 0.9,
-                                //ici on affiche notre liste de transaction
-                                child: FutureBuilder<List<UserTransaction>>(
-                                    future: FutureListTransaction,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        return ListView.builder(
-                                            itemCount: snapshot.data!.length,
-                                            shrinkWrap: true,
-                                            itemBuilder: (context, index) {
-                                              return TransactionWidget(
-                                                userId: snapshot
-                                                    .data![index].userId,
-                                                transaction_id: snapshot
-                                                    .data![index]
-                                                    .transaction_id,
-                                                n_expediteur: snapshot
-                                                    .data![index].n_expediteur,
-                                                n_destinataire: snapshot
-                                                    .data![index]
-                                                    .n_destinataire,
-                                                montant: snapshot
-                                                    .data![index].montant,
-                                                statut: snapshot
-                                                    .data![index].statut,
-                                                is_transfert: snapshot
-                                                    .data![index].is_transfert,
-                                                is_depot: snapshot
-                                                    .data![index].is_depot,
-                                                is_retrait: snapshot
-                                                    .data![index].is_retrait,
-                                                date_transactions: snapshot
-                                                    .data![index]
-                                                    .date_transactions,
-                                                n_user_connecte: snapshotUser
-                                                    .data!.phone_number,
-                                                expediteur_firstname: snapshot
-                                                    .data![index]
-                                                    .expediteur_firstname,
-                                                expediteur_phone_number: snapshot
-                                                    .data![index]
-                                                    .expediteur_phone_number,
-                                                destinataire_firstname: snapshot
-                                                    .data![index]
-                                                    .destinataire_firstname,
-                                                destinataire_phone_number: snapshot
-                                                    .data![index]
-                                                    .destinataire_phone_number,
-                                              );
-                                            });
-                                      } else if (snapshot.hasError) {
-                                        return Text('${snapshot.error}');
-                                      }
+                                  ),
+                                  Container(
+                                    height: mediaQuery.size.height * 0.72,
+                                    width: mediaQuery.size.height * 0.9,
+                                    //ici on affiche notre liste de transaction
+                                    child: FutureBuilder<List<UserTransaction>>(
+                                        future: FutureListTransaction,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            return ListView.builder(
+                                                itemCount:
+                                                    snapshot.data!.length,
+                                                shrinkWrap: true,
+                                                itemBuilder: (context, index) {
+                                                  return TransactionWidget(
+                                                    userId: snapshot
+                                                        .data![index].userId,
+                                                    transaction_id: snapshot
+                                                        .data![index]
+                                                        .transaction_id,
+                                                    n_expediteur: snapshot
+                                                        .data![index]
+                                                        .n_expediteur,
+                                                    n_destinataire: snapshot
+                                                        .data![index]
+                                                        .n_destinataire,
+                                                    montant: snapshot
+                                                        .data![index].montant,
+                                                    statut: snapshot
+                                                        .data![index].statut,
+                                                    is_transfert: snapshot
+                                                        .data![index]
+                                                        .is_transfert,
+                                                    is_depot: snapshot
+                                                        .data![index].is_depot,
+                                                    is_retrait: snapshot
+                                                        .data![index]
+                                                        .is_retrait,
+                                                    date_transactions: snapshot
+                                                        .data![index]
+                                                        .date_transactions,
+                                                    n_user_connecte:
+                                                        snapshotUser
+                                                            .data!.phone_number,
+                                                    expediteur_firstname: snapshot
+                                                        .data![index]
+                                                        .expediteur_firstname,
+                                                    expediteur_phone_number:
+                                                        snapshot.data![index]
+                                                            .expediteur_phone_number,
+                                                    destinataire_firstname: snapshot
+                                                        .data![index]
+                                                        .destinataire_firstname,
+                                                    destinataire_phone_number:
+                                                        snapshot.data![index]
+                                                            .destinataire_phone_number,
+                                                  );
+                                                });
+                                          } else if (snapshot.hasError) {
+                                            return Text('${snapshot.error}');
+                                          }
 
-                                      // By default, show a loading spinner.
-                                      return const CircularProgressIndicator();
-                                    }),
-                                //fin de la liste de transaction
-                              )
-                            ],
-                          );
+                                          // By default, show a loading spinner.
+                                          return const CircularProgressIndicator();
+                                        }),
+                                    //fin de la liste de transaction
+                                  )
+                                ],
+                              );
                   } else if (snapshotUser.hasError) {
                     return Text('${snapshotUser.error}');
                   }
@@ -266,19 +276,21 @@ class _HomePageScreenState extends State<HomePageScreen> {
             future: FutureUser,
             builder: (context, snapshotUser) {
               if (snapshotUser.hasData) {
-                return snapshotUser.data!.is_agent == 1
+                return snapshotUser.data!.is_admin == 1
                     ? Container()
-                    : FloatingActionButton(
-                        onPressed: () => Navigator.of(context).pushNamed(
-                            TransfertScreen.routeName,
-                            arguments: {'solde': snapshotUser.data!.solde}),
-                        backgroundColor: AppColor.appBleu3,
-                        child: Icon(
-                          Icons.send,
-                          size: mediaQuery.size.height * 0.05,
-                          color: AppColor.appWhite,
-                        ),
-                      );
+                    : snapshotUser.data!.is_agent == 1
+                        ? Container()
+                        : FloatingActionButton(
+                            onPressed: () => Navigator.of(context).pushNamed(
+                                TransfertScreen.routeName,
+                                arguments: {'solde': snapshotUser.data!.solde}),
+                            backgroundColor: AppColor.appBleu3,
+                            child: Icon(
+                              Icons.send,
+                              size: mediaQuery.size.height * 0.05,
+                              color: AppColor.appWhite,
+                            ),
+                          );
               } else if (snapshotUser.hasError) {
                 return Text('${snapshotUser.error}');
               } else {

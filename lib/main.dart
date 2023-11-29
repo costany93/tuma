@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuma/providers/auth_provider.dart';
+import 'package:tuma/screens/admin/disable_agent_account.dart';
+import 'package:tuma/screens/admin/enable_agent_account.dart';
+import 'package:tuma/screens/admin/reload_agent_account.dart';
 import 'package:tuma/screens/agent/depot_screen.dart';
 import 'package:tuma/screens/agent/retrait_screen.dart';
 import 'package:tuma/screens/change_password_screen.dart';
@@ -56,7 +59,13 @@ class Tuma extends StatelessWidget {
                   DepotScreen.routeName: (context) => DepotScreen(),
                   RetraitScreen.routeName: (context) => RetraitScreen(),
                   ValidateRetraitScreen.routeName: (context) =>
-                      ValidateRetraitScreen()
+                      ValidateRetraitScreen(),
+                  ReloadAgentAccount.routeName: (context) =>
+                      ReloadAgentAccount(),
+                  EnableAgentAccount.routeName: (context) =>
+                      EnableAgentAccount(),
+                  DisableAgentAccount.routeName: (context) =>
+                      DisableAgentAccount()
                 },
               )),
         ));

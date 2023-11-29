@@ -23,6 +23,20 @@ class AgentHomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Container(
+            width: mediaQuery.size.width * 0.8,
+            height: mediaQuery.size.height * 0.1,
+            color: AppColor.appGreen,
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Espace agent',
+                style: TextStyle(
+                    fontSize: mediaQuery.size.width * 0.07,
+                    color: AppColor.appWhite),
+              ),
+            ),
+          ),
           Align(
             alignment: Alignment.center,
             child: Text(
