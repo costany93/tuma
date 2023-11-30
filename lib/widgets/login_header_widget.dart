@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tuma/utillities/logo_image.dart';
 
 class LoginHeaderWidget extends StatelessWidget {
   const LoginHeaderWidget({Key? key, required this.mediaQuery})
@@ -28,20 +29,8 @@ class LoginHeaderWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/tuma-logo.png',
-              height: mediaQuery.size.height * 0.16,
-            ),
-            Container(
-              margin: EdgeInsets.only(top: mediaQuery.size.height * 0.02),
-              child: Center(
-                child: Text(
-                  'TUMA',
-                  style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      fontSize: mediaQuery.size.height * 0.03),
-                ),
-              ),
+              LogoImage.imageLogoPath,
+              height: mediaQuery.size.height * 0.20,
             ),
           ],
         ),

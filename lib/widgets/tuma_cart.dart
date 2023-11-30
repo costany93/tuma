@@ -75,7 +75,7 @@ class _TumaCartState extends State<TumaCart> {
                           ),
                         ),
                         Text(
-                          'TUMA',
+                          'TINDA',
                           style: TextStyle(
                             fontSize: mediaQuery.size.height * 0.020,
                             fontFamily: 'Inter',
