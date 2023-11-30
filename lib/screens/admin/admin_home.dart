@@ -102,7 +102,7 @@ class AdminHome extends StatelessWidget {
                       );
                     },
                     child: Center(
-                        child: Text('Recharger compte agent',
+                        child: Text('Rechargez compte agent',
                             textAlign: TextAlign.center)),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColor.appWhite,

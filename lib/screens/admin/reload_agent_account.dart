@@ -140,7 +140,7 @@ class _ReloadAgentAccountState extends State<ReloadAgentAccount> {
               ),
               Center(
                 child: Text(
-                  'Recharger le compte agent',
+                  'Rechargez le compte agent',
                   style: TextStyle(
                     fontSize: mediaQuery.size.width * 0.07,
                   ),
